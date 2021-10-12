@@ -21,4 +21,22 @@ He can fuck Vander deep in his bold ass
    5.3) Просмотр статистики
 
 # Первоначальная задача!!
-Создание БД!!!
+Создание БД!!! -> после соаздния бд можно начать заниматься всем остальным
+Пользователь:
+1) telegram_id
+2) phone
+3) name
+4) username
+Заказы столиков:
+1) phone
+2) name
+3) people_count
+4) type_table
+5) date
+6) time
+Заказ меню:
+1) phone
+2) name
+3) table
+4) time
+5) food
