@@ -22,19 +22,19 @@ He can fuck Vander deep in his bold ass
 
 # Первоначальная задача!!
 Создание БД!!! -> после соаздния бд можно начать заниматься всем остальным
-#Пользователь:
+# Пользователь:
 1) telegram_id
 2) phone
 3) name
 4) username
-#Заказы столиков:
+# Заказы столиков:
 1) phone
 2) name
 3) people_count
 4) type_table
 5) date
 6) time
-#Заказ меню:
+# Заказ меню:
 1) phone
 2) name
 3) table
