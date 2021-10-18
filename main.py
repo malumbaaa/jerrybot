@@ -5,7 +5,7 @@ import logging
 
 import requests
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
-
+import keyboards
 
 import db
 from StateMachine import StateMachine
@@ -42,33 +42,29 @@ async def people_number_message(message: types.Message):
     if message.text.isdigit():
         state = dp.current_state(user=message.chat.id)
         separated_data = str(await state.get_data()).split(";")
-        db.reserve_table(separated_data[1], f"{separated_data[2]}-{separated_data[3]}-{separated_data[4]}",
+        date = separated_data[3].split("-")
+        db.reserve_table(separated_data[2], separated_data[3],
                          message.text, message.from_user.id)
         await state.reset_state()
         await message.answer(f"Вы заказали "
-                             f"стол №{separated_data[1]}\n"
-                             f"{separated_data[4]}-{separated_data[3]}-{separated_data[2]}\n"
+                             f"стол №{separated_data[2]} на {separated_data[1]}\n"
+                             f"{date[2]}.{date[1]}.{date[0]}\n"
                              f"на {message.text} человек")
     else:
         await message.answer('Вы ввели некорректное количество людей, повторите ввод')
 
 
-# @dp.callback_query_handler(lambda c: c.data.startswith('table'))  # функция для выбора времени
-# async def people_time_message(callback_query: types.CallbackQuery):
-#     state = dp.current_state(user=callback_query.message.chat.id)
-#     separated_data = callback_query.data.split(";")
-#     time_kb = InlineKeyboardMarkup(row_width=7)
-#     buttons = []
-#     for hour in range(17, 6):
-#         for minute in ['00', '30']:
-#             buttons.append(types.InlineKeyboardButton(f"{hour}.{minute}", callback_data=f"time;{hour}.{minute}"))
-#     time_kb.add(*buttons)
-#     print(time_kb.values)
-#     await bot.answer_callback_query(callback_query.id)
-#     await state.set_data(callback_query.data)
-#     await state.set_state(StateMachine.all()[3])  # set people time set
-#     await bot.edit_message_text(text=f"Выберите время", reply_markup=time_kb, chat_id=callback_query.message.chat.id,
-#                                 message_id=callback_query.message.message_id)
+@dp.callback_query_handler(lambda c: c.data.startswith('table'))  # функция для выбора времени
+async def people_time_message(callback_query: types.CallbackQuery):
+    state = dp.current_state(user=callback_query.message.chat.id)
+    separated_data = callback_query.data.split(";")
+    time_kb = keyboards.get_reserved_time(f"{separated_data[2]}-{separated_data[3]}-{separated_data[4]}",
+                                          separated_data[1])
+    await bot.answer_callback_query(callback_query.id)
+    await state.set_data(callback_query.data)
+    # await state.set_state(StateMachine.all()[3])  # set people time set
+    await bot.edit_message_text(text=f"Выберите время", reply_markup=time_kb, chat_id=callback_query.message.chat.id,
+                                message_id=callback_query.message.message_id)
 
 
 @dp.callback_query_handler(lambda c: c.data.startswith('DAY'), state=StateMachine.ADMIN) # функция вывода заказанных столов и админа
@@ -88,16 +84,22 @@ async def table_choose_callback(callback_query: types.CallbackQuery):
         await bot.send_message(text="В этот день записей нет :(", chat_id=callback_query.message.chat.id)
 
 
-@dp.callback_query_handler(lambda c: c.data.startswith('table')) # функция ввода количества людей
+@dp.callback_query_handler(lambda c: c.data.startswith('reserved'))  # функция ввода количества людей
+async def table_choose_callback(callback_query: types.CallbackQuery):
+    await bot.answer_callback_query(callback_query.id)
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('time'))  # функция ввода количества людей
 async def table_choose_callback(callback_query: types.CallbackQuery):
     state = dp.current_state(user=callback_query.message.chat.id)
     separated_data = callback_query.data.split(";")
+    date = separated_data[3].split("-")
     await bot.answer_callback_query(callback_query.id)
     await state.set_data(callback_query.data)
     await state.set_state(StateMachine.all()[2])  # set people_number state
     await bot.edit_message_text(text=f"Вы выбрали "
-                                     f"стол №{separated_data[1]}\n"
-                                     f"{separated_data[4]}-{separated_data[3]}-{separated_data[2]}\n"
+                                     f"стол №{separated_data[2]} на {separated_data[1]}\n"
+                                     f"{date[2]}.{date[1]}.{date[0]}\n"
                                      f"Напишите количество человек:",
                                 chat_id=callback_query.message.chat.id,
                                 message_id=callback_query.message.message_id)
