@@ -148,7 +148,6 @@ async def send_message(message: types.Message):
     await state.set_state(StateMachine.all()[0])
 
 
-
 @dp.message_handler(commands=['send_message'], state=StateMachine.ADMIN)
 async def admin_message(message: types.Message):
     state = dp.current_state(user=message.chat.id)
@@ -237,8 +236,6 @@ async def reg(message: types.Message):
         state = dp.current_state(user=message.chat.id)
         await state.set_state(StateMachine.all()[4])  # registration_name_state
         await message.answer("Напишите свое имя")
-
-
 
 
 if __name__ == '__main__':

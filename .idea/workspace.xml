@@ -19,17 +19,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="89945f79-e74b-4b8f-954b-76e162baabb1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jerrybot.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/StateMachine.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TGCalendar/telegramcalendar.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/TGCalendar/telegramoptions.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/db.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/keyboards.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/register.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+    <list default="true" id="89945f79-e74b-4b8f-954b-76e162baabb1" name="Default Changelist" comment="new_functions_commit">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -136,6 +127,14 @@
       <option name="presentableId" value="Default" />
       <updated>1634057039773</updated>
     </task>
+    <task id="LOCAL-00001" summary="new_functions_commit">
+      <created>1634080490189</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1634080490189</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -152,7 +151,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="ebatnya" />
-    <option name="LAST_COMMIT_MESSAGE" value="ebatnya" />
+    <MESSAGE value="new_functions_commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="new_functions_commit" />
   </component>
   <component name="WindowStateProjectService">
     <state x="414" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1634064805577">
@@ -167,42 +167,46 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="275" key="FileChooserDialogImpl/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634060028246" />
-    <state width="1899" height="348" key="GridCell.Tab.0.bottom" timestamp="1634079780219">
+    <state width="1899" height="348" key="GridCell.Tab.0.bottom" timestamp="1634083398194">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.bottom/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634079780219" />
-    <state width="1899" height="348" key="GridCell.Tab.0.center" timestamp="1634079780219">
+    <state width="1899" height="348" key="GridCell.Tab.0.bottom/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398194" />
+    <state width="1899" height="348" key="GridCell.Tab.0.center" timestamp="1634083398193">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.center/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634079780219" />
-    <state width="1899" height="348" key="GridCell.Tab.0.left" timestamp="1634079780219">
+    <state width="1899" height="348" key="GridCell.Tab.0.center/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398193" />
+    <state width="1899" height="348" key="GridCell.Tab.0.left" timestamp="1634083398193">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.left/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634079780219" />
-    <state width="1899" height="348" key="GridCell.Tab.0.right" timestamp="1634079780219">
+    <state width="1899" height="348" key="GridCell.Tab.0.left/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398193" />
+    <state width="1899" height="348" key="GridCell.Tab.0.right" timestamp="1634083398194">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.right/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634079780219" />
-    <state width="1899" height="348" key="GridCell.Tab.1.bottom" timestamp="1634079780219">
+    <state width="1899" height="348" key="GridCell.Tab.0.right/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398194" />
+    <state width="1899" height="348" key="GridCell.Tab.1.bottom" timestamp="1634083398195">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.1.bottom/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634079780219" />
-    <state width="1899" height="348" key="GridCell.Tab.1.center" timestamp="1634079780219">
+    <state width="1899" height="348" key="GridCell.Tab.1.bottom/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398195" />
+    <state width="1899" height="348" key="GridCell.Tab.1.center" timestamp="1634083398194">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.1.center/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634079780219" />
-    <state width="1899" height="348" key="GridCell.Tab.1.left" timestamp="1634079780219">
+    <state width="1899" height="348" key="GridCell.Tab.1.center/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398194" />
+    <state width="1899" height="348" key="GridCell.Tab.1.left" timestamp="1634083398194">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.1.left/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634079780219" />
-    <state width="1899" height="348" key="GridCell.Tab.1.right" timestamp="1634079780219">
+    <state width="1899" height="348" key="GridCell.Tab.1.left/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398194" />
+    <state width="1899" height="348" key="GridCell.Tab.1.right" timestamp="1634083398195">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.1.right/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634079780219" />
+    <state width="1899" height="348" key="GridCell.Tab.1.right/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398195" />
     <state x="598" y="281" key="MultipleFileMergeDialog" timestamp="1634057844432">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="598" y="281" key="MultipleFileMergeDialog/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634057844432" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1634080532499">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634080532499" />
     <state x="777" y="434" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1634057463302">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
