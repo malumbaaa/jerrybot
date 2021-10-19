@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="BranchesTreeState">
-    <expand>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-      <path>
-        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
-        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
-      </path>
-    </expand>
-    <select />
-  </component>
   <component name="ChangeListManager">
-    <list default="true" id="89945f79-e74b-4b8f-954b-76e162baabb1" name="Default Changelist" comment="new_functions_commit">
+    <list default="true" id="3fab15e1-0fc0-438e-891f-03eead46fc8b" name="Changes" comment="added table registration, table reservation and admin panel">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/keyboards.py" beforeDir="false" afterPath="$PROJECT_DIR$/keyboards.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,30 +20,44 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="master" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectId" id="1zPkJWKmCrzSW1t2gODyDGVXwGs" />
+  <component name="ProjectId" id="1zP3UKcnTo8Au9vpoGFZ4nrmpsV" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/venv/Scripts" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Projects\Bots\jerrybar" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.main">
     <configuration name="StateMachine" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="jerrybot" />
+      <module name="jerrybar" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\zhuma\AppData\Local\Programs\Python\Python39\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/venv" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/StateMachine.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -69,39 +67,19 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
-      <module name="jerrybot" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:\Users\zhuma\AppData\Local\Programs\Python\Python39\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/venv" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/venv/Scripts" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="jerrybot" />
+      <module name="jerrybar" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Users\zhuma\AppData\Local\Programs\Python\Python39\python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/venv" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
@@ -121,28 +99,52 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="89945f79-e74b-4b8f-954b-76e162baabb1" name="Default Changelist" comment="" />
-      <created>1634057039773</created>
+      <changelist id="3fab15e1-0fc0-438e-891f-03eead46fc8b" name="Changes" comment="" />
+      <created>1634035911936</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1634057039773</updated>
+      <updated>1634035911936</updated>
+      <workItem from="1634035915219" duration="20701000" />
+      <workItem from="1634409827062" duration="29000" />
+      <workItem from="1634554660574" duration="588000" />
+      <workItem from="1634595384029" duration="3732000" />
     </task>
-    <task id="LOCAL-00001" summary="new_functions_commit">
-      <created>1634080490189</created>
+    <task id="LOCAL-00001" summary="added table registration, table reservation and admin panel">
+      <created>1634056654743</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1634080490189</updated>
+      <updated>1634056654743</updated>
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="dev" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -150,66 +152,18 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="ebatnya" />
-    <MESSAGE value="new_functions_commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="new_functions_commit" />
+    <MESSAGE value="added table registration, table reservation and admin panel" />
+    <option name="LAST_COMMIT_MESSAGE" value="added table registration, table reservation and admin panel" />
   </component>
-  <component name="WindowStateProjectService">
-    <state x="414" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1634064805577">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="414" y="175" width="1092" height="738" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634064805577" />
-    <state x="740" y="249" key="#com.intellij.ide.macro.MacrosDialog" timestamp="1634060032696">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="740" y="249" key="#com.intellij.ide.macro.MacrosDialog/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634060032696" />
-    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1634060028246">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="740" y="275" key="FileChooserDialogImpl/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634060028246" />
-    <state width="1899" height="348" key="GridCell.Tab.0.bottom" timestamp="1634083398194">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.bottom/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398194" />
-    <state width="1899" height="348" key="GridCell.Tab.0.center" timestamp="1634083398193">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.center/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398193" />
-    <state width="1899" height="348" key="GridCell.Tab.0.left" timestamp="1634083398193">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.left/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398193" />
-    <state width="1899" height="348" key="GridCell.Tab.0.right" timestamp="1634083398194">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.right/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398194" />
-    <state width="1899" height="348" key="GridCell.Tab.1.bottom" timestamp="1634083398195">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="348" key="GridCell.Tab.1.bottom/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398195" />
-    <state width="1899" height="348" key="GridCell.Tab.1.center" timestamp="1634083398194">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="348" key="GridCell.Tab.1.center/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398194" />
-    <state width="1899" height="348" key="GridCell.Tab.1.left" timestamp="1634083398194">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="348" key="GridCell.Tab.1.left/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398194" />
-    <state width="1899" height="348" key="GridCell.Tab.1.right" timestamp="1634083398195">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state width="1899" height="348" key="GridCell.Tab.1.right/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634083398195" />
-    <state x="598" y="281" key="MultipleFileMergeDialog" timestamp="1634057844432">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="598" y="281" key="MultipleFileMergeDialog/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634057844432" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1634080532499">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634080532499" />
-    <state x="777" y="434" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1634057463302">
-      <screen x="0" y="0" width="1920" height="1040" />
-    </state>
-    <state x="777" y="434" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634057463302" />
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="message.contact" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/jerrybar$StateMachine.coverage" NAME="StateMachine Coverage Results" MODIFIED="1634595788919" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/jerrybar$main.coverage" NAME="main Coverage Results" MODIFIED="1634599146378" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

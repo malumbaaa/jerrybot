@@ -12,6 +12,7 @@ from collections import Counter
 
 locale.setlocale(locale.LC_ALL, 'ru_RU')
 
+
 def get_database():
     # Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
     client = MongoClient(MONGO_CONNECTION_STRING)
@@ -34,6 +35,10 @@ def reserve_table(table_number, date, people_count, telegram_id):
     reservations = db["Reservations"]
     reservations.insert_one(reserve_data)
     print(reserve_data)
+
+
+def get_reserved_time(date: str, table: str) -> list:  # placement
+    return ["19:00", "19:30", "20:00", "20:30", "00:00", "00:30", "01:00", "01:30"]
 
 
 def get_reservations(date: str) -> list:
