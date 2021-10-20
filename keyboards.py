@@ -15,7 +15,7 @@ def table_choose(table_count: int, year, month, day):
 def get_reserved_time(date: str, table: str) -> InlineKeyboardMarkup:
     time_kb = InlineKeyboardMarkup(row_width=5)
     buttons = []
-    reserved_time = db.get_reserved_time(date, table)  # needs to be get from db
+    reserved_time = db.get_reserved_time(date, table)
     for hour in range(18, 24 + 4):
         if hour >= 24:
             hour -= 24
@@ -27,6 +27,16 @@ def get_reserved_time(date: str, table: str) -> InlineKeyboardMarkup:
             else:
                 buttons.append(InlineKeyboardButton(f"     ", callback_data=f"reserved"))
     return time_kb.add(*buttons)
+
+
+def get_categories_kb() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardMarkup(row_width=2)
+    buttons = []
+    categories = db.get_categories()
+    if len(categories) > 0:
+        for category in categories:
+            buttons.append(InlineKeyboardButton(f"{category['name']}", callback_data=f"category;{category['name']}"))
+    return keyboard.add(*buttons)
 
 
 def yes_no_keyboard(number_in_queue):

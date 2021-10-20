@@ -2,7 +2,7 @@
 # https://surik00.gitbooks.io/aiogram-lessons/content/chapter3.html
 import json
 import logging
-
+from handlers.adding_dishes import register_handlers_food, AddDish
 import requests
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
 import keyboards
@@ -96,7 +96,7 @@ async def table_choose_callback(callback_query: types.CallbackQuery):
     date = separated_data[3].split("-")
     await bot.answer_callback_query(callback_query.id)
     await state.set_data(callback_query.data)
-    await state.set_state(StateMachine.all()[2])  # set people_number state
+    await state.set_state(StateMachine.all()[3])  # set people_number state
     await bot.edit_message_text(text=f"Вы выбрали "
                                      f"стол №{separated_data[2]} на {separated_data[1]}\n"
                                      f"{date[2]}.{date[1]}.{date[0]}\n"
@@ -105,13 +105,14 @@ async def table_choose_callback(callback_query: types.CallbackQuery):
                                 message_id=callback_query.message.message_id)
 
 
-@dp.message_handler(commands=['admin']) # функция перехода в режим админа
+@dp.message_handler(commands=['admin'])  # функция перехода в режим админа
 async def set_admin_state(message: types.Message):
     if str(message.from_user.id) in config.ADMIN_IDS:
         state = dp.current_state(user=message.chat.id)
         kb = ReplyKeyboardMarkup(resize_keyboard=True)
         kb.add(types.KeyboardButton(text="✉Отправить рассылку✉"))
         kb.add(types.KeyboardButton(text="📊Посмотреть статистику📊"))
+        kb.add(types.KeyboardButton(text="🍽Добавить блюдо🍽"))
         kb.add(types.KeyboardButton(text="❌Выйти из режима админа❌"))
         await state.set_state(StateMachine.all()[0])  # set admin state
         await message.answer("Вы вошли в режим админа", reply_markup=kb)
@@ -123,6 +124,43 @@ async def set_admin_state(message: types.Message):
 async def reservations(message: types.Message):
     calendar_keyboard = tgcalendar.create_calendar()
     await message.answer("Пожалуйста, выберите дату:", reply_markup=calendar_keyboard)
+
+
+@dp.message_handler(state=StateMachine.ADMIN_NEW_CATEGORY)
+async def category_message(message: types.Message):
+    db.add_category(message.text)
+    state = dp.current_state(user=message.chat.id)
+    await state.set_state(AddDish.waiting_for_dish_name)
+    await state.update_data(category=message.text)
+    await message.answer(f"Категория {message.text} добавлена\nНапишите название блюда",
+                         reply_markup=types.ReplyKeyboardRemove())
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('category'), state=StateMachine.ADMIN)
+async def category_callback(callback_query: types.CallbackQuery):
+    separated_data = callback_query.data.split(";")
+    state = dp.current_state(user=callback_query.message.chat.id)
+    if separated_data[1] == "addnew":
+        await state.set_state(StateMachine.all()[2])  # admin_new_category state
+        await bot.edit_message_text(text="Напишите название категории",
+                                    chat_id=callback_query.message.chat.id,
+                                    message_id=callback_query.message.message_id)
+        await bot.answer_callback_query(callback_query.id)
+    else:
+        await state.set_state(AddDish.waiting_for_dish_name)
+        await state.update_data(category=separated_data[1])
+        await bot.edit_message_text(text=f"Напишите название блюда\n{callback_query.data}",
+                                    chat_id=callback_query.message.chat.id,
+                                    message_id=callback_query.message.message_id)
+        await bot.answer_callback_query(callback_query.id)
+
+
+@dp.message_handler(lambda m: m.text.startswith('🍽Добавить блюдо🍽'), state=StateMachine.ADMIN)
+@dp.message_handler(commands=['add'], state=StateMachine.ADMIN)
+async def add_dish(message: types.Message):
+    kb = keyboards.get_categories_kb()
+    kb.add(types.InlineKeyboardButton('Создать новую', callback_data='category;addnew'))
+    await message.answer('Выберите категорию:', reply_markup=kb)
 
 
 @dp.message_handler(lambda m: m.text.startswith('📊Посмотреть статистику'), state=StateMachine.ADMIN)
@@ -204,7 +242,7 @@ async def register_message(message: types.Message):
         await state.set_data(message.text)
         await message.answer(f"Нажмите кнопку ниже, чтобы поделиться с номером телефона", reply_markup=kb)
     await state.set_data(name)
-    await state.set_state(StateMachine.all()[5])  # set registration_phone_state
+    await state.set_state(StateMachine.all()[6])  # set registration_phone_state
 
 
 @dp.message_handler(lambda m: m.text.startswith('🪑Забронировать столик'))
@@ -251,9 +289,10 @@ async def reg(message: types.Message):
         await message.answer(f"Вы уже зарегистрированы", reply_markup=kb)
     else:
         state = dp.current_state(user=message.chat.id)
-        await state.set_state(StateMachine.all()[4])  # registration_name_state
+        await state.set_state(StateMachine.all()[5])  # registration_name_state
         await message.answer("Напишите свое имя")
 
 
 if __name__ == '__main__':
+    register_handlers_food(dp)
     executor.start_polling(dp)

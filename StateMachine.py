@@ -7,6 +7,7 @@ class StateMachine(Helper):
     REGISTRATION_NAME_STATE = ListItem()
     REGISTRATION_PHONE_STATE = ListItem()
     ADMIN = ListItem()
+    ADMIN_NEW_CATEGORY = ListItem()
     PEOPLE_NUMBER = ListItem()
     PEOPLE_TIME = ListItem()
     ADMIN_MESSAGE_STATE = ListItem()

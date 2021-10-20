@@ -14,10 +14,7 @@ locale.setlocale(locale.LC_ALL, 'ru_RU')
 
 
 def get_database():
-    # Create a connection using MongoClient. You can import MongoClient or use pymongo.MongoClient
     client = MongoClient(MONGO_CONNECTION_STRING)
-
-    # Create the database for our example (we will use the same database throughout the tutorial
     return client['VanderTest']
 
 
@@ -38,7 +35,7 @@ def reserve_table(table_number, date, people_count, time, telegram_id):
     print(reserve_data)
 
 
-def get_reserved_time(date: str, table: str) -> list:  # placement
+def get_reserved_time(date: str, table: str) -> list:
     db = get_database()
     reservations_collection = db["Reservations"]
     reservations = list(reservations_collection.find({'date': date, 'table_number': table}))
@@ -78,25 +75,61 @@ def find_user_by_telegramid(telegram_id: str):
 def is_registered(telegram_id: str) -> bool:
     db = get_database()
     users = db["Users"]
-    uid = users.find_one({"telegram_id" : f"{telegram_id}"})
+    uid = users.find_one({"telegram_id": f"{telegram_id}"})
     if uid is not None:
         return True
     else:
         return False
 
 
-def get_all_users():
+def get_all_users() -> list:
     db = get_database()
     users_collection = db["Users"]
     users = list(users_collection.find())
     return users
 
 
-def get_all_orders():
+def get_all_orders() -> list:
     db = get_database()
     reservation_collection = db["Reservations"]
     reservations = list(reservation_collection.find())
     return reservations
+
+
+def get_category_by_name(category_name):
+    db = get_database()
+    categories = db["Categories"]
+    category = categories.find_one({"name": f"{category_name}"})
+    return category
+
+
+def add_dish(name: str, category_name: str, description: str, price: str):
+    category = get_category_by_name(category_name)
+    user_data = {
+        "name": name,
+        "category": category["name"],
+        "description": description,
+        "price": price
+    }
+    db = get_database()
+    dishes_collection = db["Dishes"]
+    dishes_collection.insert_one(user_data)
+
+
+def add_category(name: str):
+    user_data = {
+        "name": name
+    }
+    db = get_database()
+    categories_collection = db["Categories"]
+    categories_collection.insert_one(user_data)
+
+
+def get_categories() -> list:
+    db = get_database()
+    categories_collection = db["Categories"]
+    categories = list(categories_collection.find())
+    return categories
 
 
 def get_stat_order():  # можно соеденить 2 функции
@@ -162,9 +195,3 @@ def get_stat_users():
                 f"Телефон: {value[0]['user_phone']}\n"
             )
     return stat_users
-
-
-
-
-
-
