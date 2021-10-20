@@ -21,12 +21,13 @@ def get_database():
     return client['VanderTest']
 
 
-def reserve_table(table_number, date, people_count, telegram_id):
+def reserve_table(table_number, date, people_count, time, telegram_id):
     user = find_user_by_telegramid(telegram_id)
     reserve_data = {
         "user_name": user["name"],
         "user_phone": user["phone"],
         "date": date,
+        "time": time,
         "table_number": table_number,
         "people_count": people_count,
         "telegram_id": str(telegram_id)
@@ -38,7 +39,11 @@ def reserve_table(table_number, date, people_count, telegram_id):
 
 
 def get_reserved_time(date: str, table: str) -> list:  # placement
-    return ["19:00", "19:30", "20:00", "20:30", "00:00", "00:30", "01:00", "01:30"]
+    db = get_database()
+    reservations_collection = db["Reservations"]
+    reservations = list(reservations_collection.find({'date': date, 'table_number': table}))
+    times = [i['time'] for i in reservations]
+    return times
 
 
 def get_reservations(date: str) -> list:
@@ -145,14 +150,17 @@ def get_stat_users():
         #     'Имя': value[0]['user_name'],
         #     'Телефон': value[0]['user_phone']  на случай, если нам всё-таки понадобится вид слловаря
         # })
-        stat_users.append(
-            f'Количество заказов:  {len(value)}\n'+
-            f"Любимый столик:  {Counter([i['table_number'] for i in value]).most_common()[0][0]}\n"+
-            f"Любимый день недели: {Counter([i['date'] for i in value]).most_common()[0][0]}\n"+
-            f"Среднее кол-во людей:  {sum([int(i['people_count']) for i in value]) / len(value)}\n"+
-            f"Имя: {value[0]['user_name']}\n"+
-            f"Телефон: {value[0]['user_phone']}\n"
-        )
+        if len(value) == 0:
+            pass
+        else:
+            stat_users.append(
+                f'Количество заказов:  {len(value)}\n'+
+                f"Любимый столик:  {Counter([i['table_number'] for i in value]).most_common()[0][0]}\n"+
+                f"Любимый день недели: {Counter([i['date'] for i in value]).most_common()[0][0]}\n"+
+                f"Среднее кол-во людей:  {sum([int(i['people_count']) for i in value]) / len(value)}\n"+
+                f"Имя: {value[0]['user_name']}\n"+
+                f"Телефон: {value[0]['user_phone']}\n"
+            )
     return stat_users
 
 

@@ -44,7 +44,7 @@ async def people_number_message(message: types.Message):
         separated_data = str(await state.get_data()).split(";")
         date = separated_data[3].split("-")
         db.reserve_table(separated_data[2], separated_data[3],
-                         message.text, message.from_user.id)
+                         message.text, separated_data[1], message.from_user.id)
         await state.reset_state()
         await message.answer(f"Вы заказали "
                              f"стол №{separated_data[2]} на {separated_data[1]}\n"
