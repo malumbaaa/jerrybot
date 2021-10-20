@@ -103,13 +103,14 @@ def get_category_by_name(category_name):
     return category
 
 
-def add_dish(name: str, category_name: str, description: str, price: str):
+def add_dish(name: str, category_name: str, description: str, price: str, photo_id: str):
     category = get_category_by_name(category_name)
     user_data = {
         "name": name,
         "category": category["name"],
         "description": description,
-        "price": price
+        "price": price,
+        "photo_id": photo_id
     }
     db = get_database()
     dishes_collection = db["Dishes"]
