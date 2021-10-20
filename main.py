@@ -110,7 +110,9 @@ async def set_admin_state(message: types.Message):
     if str(message.from_user.id) in config.ADMIN_IDS:
         state = dp.current_state(user=message.chat.id)
         kb = ReplyKeyboardMarkup(resize_keyboard=True)
-        kb.add(types.KeyboardButton(text="Выйти из режима админа"))
+        kb.add(types.KeyboardButton(text="Отправить рассылку✉"))
+        kb.add(types.KeyboardButton(text="Посмотреть статистику📊"))
+        kb.add(types.KeyboardButton(text="Выйти из режима админа❌"))
         await state.set_state(StateMachine.all()[0])  # set admin state
         await message.answer("Вы вошли в режим админа", reply_markup=kb)
     else:
@@ -123,6 +125,7 @@ async def reservations(message: types.Message):
     await message.answer("Пожалуйста, выберите дату:", reply_markup=calendar_keyboard)
 
 
+@dp.message_handler(lambda m: m.text.startswith('Посмотреть статистику'), state=StateMachine.ADMIN)
 @dp.message_handler(commands=['stat'], state=StateMachine.ADMIN)  # функция для видов статистики
 async def admin_statistics(message: types.Message):
     kb = InlineKeyboardMarkup()
@@ -150,6 +153,7 @@ async def send_message(message: types.Message):
     await state.set_state(StateMachine.all()[0])
 
 
+@dp.message_handler(lambda m: m.text.startswith('Отправить рассылку'), state=StateMachine.ADMIN)
 @dp.message_handler(commands=['send_message'], state=StateMachine.ADMIN)
 async def admin_message(message: types.Message):
     state = dp.current_state(user=message.chat.id)
@@ -173,9 +177,12 @@ async def receive_contact_message(message: types.Message):
     rm_kb = types.ReplyKeyboardRemove()
     state = dp.current_state(user=message.chat.id)
     phone_number = message.contact.phone_number
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    kb.add(types.KeyboardButton(text="Меню"))
+    kb.add(types.KeyboardButton(text="Забронировать столик"))
     print("phone number " + message.contact.phone_number)
     if db.register_new_user(str(await state.get_data()), str(phone_number), str(message.from_user.id)):
-        await message.answer('Вы успешно зарегистрировались', reply_markup=rm_kb)
+        await message.answer('Вы успешно зарегистрировались', reply_markup=kb)
     else:
         await message.answer('Что-то пошло не так :(', reply_markup=rm_kb)
     await state.reset_state()
@@ -197,6 +204,7 @@ async def register_message(message: types.Message):
     await state.set_state(StateMachine.all()[5])  # set registration_phone_state
 
 
+@dp.message_handler(lambda m: m.text.startswith('Забронировать столик'))
 @dp.message_handler(commands=['reserve'])
 async def reserve(message: types.Message):
     calendar_keyboard = tgcalendar.create_calendar()
@@ -234,7 +242,10 @@ async def reg(message: types.Message):
 async def reg(message: types.Message):
     telegram_id = message.from_user.id
     if db.is_registered(telegram_id):
-        await message.answer(f"Вы уже зарегистрированы")
+        kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        kb.add(types.KeyboardButton(text="Меню🍽"))
+        kb.add(types.KeyboardButton(text="Забронировать столик🪑"))
+        await message.answer(f"Вы уже зарегистрированы", reply_markup=kb)
     else:
         state = dp.current_state(user=message.chat.id)
         await state.set_state(StateMachine.all()[4])  # registration_name_state

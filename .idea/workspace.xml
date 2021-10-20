@@ -19,9 +19,8 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3fab15e1-0fc0-438e-891f-03eead46fc8b" name="Changes" comment="merge_with_dev">
+    <list default="true" id="3fab15e1-0fc0-438e-891f-03eead46fc8b" name="Changes" comment="edit_time">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/db.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -85,15 +84,15 @@
       <method v="2" />
     </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="jerrybar" />
+      <module name="jerrybot" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
+      <option name="SDK_HOME" value="C:\Users\zhuma\AppData\Local\Programs\Python\Python39\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
@@ -106,6 +105,10 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.StateMachine" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main" />
@@ -140,7 +143,14 @@
       <option name="project" value="LOCAL" />
       <updated>1634654803870</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="edit_time">
+      <created>1634738390247</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1634738390247</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -178,23 +188,53 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added table registration, table reservation and admin panel" />
     <MESSAGE value="merge_with_dev" />
-    <option name="LAST_COMMIT_MESSAGE" value="merge_with_dev" />
+    <MESSAGE value="edit_time" />
+    <option name="LAST_COMMIT_MESSAGE" value="edit_time" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1634740051490">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="414" y="175" key="#com.intellij.execution.impl.EditConfigurationsDialog/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634740051490" />
+    <state width="1899" height="348" key="GridCell.Tab.0.bottom" timestamp="1634740487527">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.bottom/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634740487527" />
+    <state width="1899" height="348" key="GridCell.Tab.0.center" timestamp="1634740487526">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.center/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634740487526" />
+    <state width="1899" height="348" key="GridCell.Tab.0.left" timestamp="1634740487526">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.left/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634740487526" />
+    <state width="1899" height="348" key="GridCell.Tab.0.right" timestamp="1634740487526">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.0.right/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634740487526" />
+    <state width="1899" height="348" key="GridCell.Tab.1.bottom" timestamp="1634740487527">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.1.bottom/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634740487527" />
+    <state width="1899" height="348" key="GridCell.Tab.1.center" timestamp="1634740487527">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.1.center/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634740487527" />
+    <state width="1899" height="348" key="GridCell.Tab.1.left" timestamp="1634740487527">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.1.left/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634740487527" />
+    <state width="1899" height="348" key="GridCell.Tab.1.right" timestamp="1634740487527">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1899" height="348" key="GridCell.Tab.1.right/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634740487527" />
     <state x="598" y="281" key="MultipleFileMergeDialog" timestamp="1634654712588">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="598" y="281" key="MultipleFileMergeDialog/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634654712588" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1634654813652">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1634738501224">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634654813652" />
-  </component>
-  <component name="XDebuggerManager">
-    <watches-manager>
-      <configuration name="PythonConfigurationType">
-        <watch expression="message.contact" />
-      </configuration>
-    </watches-manager>
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1634738501224" />
   </component>
 </project>
