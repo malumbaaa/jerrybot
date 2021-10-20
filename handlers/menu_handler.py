@@ -1,6 +1,8 @@
 from aiogram import Dispatcher, types
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.types import ParseMode
+from aiogram.utils.markdown import *
 
 import db
 import keyboards
@@ -13,17 +15,30 @@ async def show_category(message: types.Message):
 async def show_food_by_category(callback_query: types.CallbackQuery):
     categories = callback_query.data.split(';')
     food = db.get_food_by_category(categories[1])
-    await callback_query.message.answer(f"{food[0]['name']}\n{food[0]['description']}\n{food[0]['price']}",
-                                        reply_markup=keyboards.beautiful_change_of_food(0, len(food), categories[1]))
+    await callback_query.message.answer_photo(photo=food[0]['photo_id'],
+                                              caption=bold(f"{food[0]['name']}\n\n") +
+                                                      f"{food[0]['description']}\n\n" +
+                                                      bold(f"{food[0]['price']} BYN\n"),
+                                              parse_mode=ParseMode.MARKDOWN,
+                                              reply_markup=keyboards.beautiful_change_of_food(0, len(food), categories[1]))
 
 
 async def change_food_by_callback(callback_query: types.CallbackQuery):
     categories = callback_query.data.split(';')
     food = db.get_food_by_category(categories[1])
-    if len(food) > int(categories[2]) >= 0:
+    current_food = int(categories[2])
+    if len(food) > current_food >= 0:
         try:
-            await callback_query.message.edit_text(f"{food[int(categories[2])]['name']}\n{food[int(categories[2])]['description']}\n{food[int(categories[2])]['price']}",
-                                               reply_markup=keyboards.beautiful_change_of_food(int(categories[2]), len(food), categories[1]))
+            await callback_query.message.delete()
+            await callback_query.message.answer_photo(photo=food[current_food]['photo_id'],
+                                                      caption=bold(f"{food[current_food]['name']}\n\n") +
+                                                              f"{food[current_food]['description']}\n\n" +
+                                                              bold(f"{food[current_food]['price']} BYN\n"),
+                                                      parse_mode=ParseMode.MARKDOWN,
+                                                      reply_markup=keyboards
+                                                      .beautiful_change_of_food(current_food,
+                                                                                len(food),
+                                                                                categories[1]))
         except:
             await callback_query.answer()
     else:
