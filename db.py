@@ -195,3 +195,10 @@ def get_stat_users():
                 f"Телефон: {value[0]['user_phone']}\n"
             )
     return stat_users
+
+
+def get_food_by_category(category):
+    db = get_database()
+    food_collection = db['Dishes']
+    food = list(food_collection.find({"category": category}))
+    return food

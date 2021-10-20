@@ -6,6 +6,7 @@ from handlers.adding_dishes import register_handlers_food, AddDish
 import requests
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
 import keyboards
+from handlers.menu_handler import register_handlers_menu
 
 import db
 from StateMachine import StateMachine
@@ -252,6 +253,7 @@ async def reserve(message: types.Message):
     await message.answer("Пожалуйста, выберите дату:", reply_markup=calendar_keyboard)
 
 
+
 @dp.callback_query_handler(lambda c: c.data, state=StateMachine.ADMIN)
 async def callback_calendar(callback_query: types.CallbackQuery):
     response = tgcalendar.process_calendar_selection(bot, callback_query)
@@ -259,7 +261,10 @@ async def callback_calendar(callback_query: types.CallbackQuery):
     await bot.answer_callback_query(callback_query.id)
 
 
-@dp.callback_query_handler(lambda c: c.data)
+@dp.callback_query_handler(lambda c: c.data.startswith('IGNORE'))
+@dp.callback_query_handler(lambda c: c.data.startswith('PREV-MONTH'))
+@dp.callback_query_handler(lambda c: c.data.startswith('DAY'))
+@dp.callback_query_handler(lambda c: c.data.startswith('NEXT-MONTH'))
 async def callback_calendar(callback_query: types.CallbackQuery):
     response = tgcalendar.process_calendar_selection(bot, callback_query)
     await response[0]
@@ -284,7 +289,7 @@ async def reg(message: types.Message):
     telegram_id = message.from_user.id
     if db.is_registered(telegram_id):
         kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        kb.add(types.KeyboardButton(text="Меню🍽"))
+        kb.add(types.KeyboardButton(text="🍽Меню🍽"))
         kb.add(types.KeyboardButton(text="🪑Забронировать столик🪑"))
         await message.answer(f"Вы уже зарегистрированы", reply_markup=kb)
     else:
@@ -294,5 +299,6 @@ async def reg(message: types.Message):
 
 
 if __name__ == '__main__':
+    register_handlers_menu(dp)
     register_handlers_food(dp)
     executor.start_polling(dp)

@@ -35,7 +35,7 @@ def get_categories_kb() -> InlineKeyboardMarkup:
     categories = db.get_categories()
     if len(categories) > 0:
         for category in categories:
-            buttons.append(InlineKeyboardButton(f"{category['name']}", callback_data=f"category;{category['name']}"))
+            buttons.append(InlineKeyboardButton(f"{category['name']}", callback_data=f"category;{category['name']};1"))
     return keyboard.add(*buttons)
 
 
@@ -52,3 +52,11 @@ def time_choose():
         for minute in ['00', '30']:
             time_kb.add(InlineKeyboardButton(f"{hour}.{minute}", callback_data=f"time;{hour};{minute}"))
     return time_kb
+
+
+def beautiful_change_of_food(current_food, count_food, category):
+    food_changing_kb = InlineKeyboardMarkup(row_width=3)
+    left_btn = InlineKeyboardButton("⬅️", callback_data=f"food;{category};{int(current_food)-1}")
+    right_btn = InlineKeyboardButton("➡️", callback_data=f"food;{category};{int(current_food)+1}")
+    count_btn = InlineKeyboardButton(f"{current_food+1}/{count_food}", callback_data=f'food;{category};0')
+    return food_changing_kb.add(left_btn, count_btn, right_btn)
