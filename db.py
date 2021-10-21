@@ -8,6 +8,7 @@ import locale
 
 
 from collections import Counter
+import matplotlib.pyplot as plt
 
 
 locale.setlocale(locale.LC_ALL, 'ru_RU')
@@ -203,3 +204,37 @@ def get_food_by_category(category):
     food_collection = db['Dishes']
     food = list(food_collection.find({"category": category}))
     return food
+
+
+def get_stat_time():
+    db = get_database()
+    reservations = get_all_orders()
+    time = []
+    for hour in range(18, 24 + 4):
+        if hour >= 24:
+            hour -= 24
+            hour = str(f"0{hour}")
+        for minute in ['00', '30']:
+            time.append(f'{hour}:{minute}')
+    time_stat = dict.fromkeys(calendar.day_name)
+    count_people = dict.fromkeys(calendar.day_name)
+    for stat in time_stat:
+        time_stat[stat] = dict.fromkeys(time, 0)
+        count_people[stat] = dict.fromkeys(time, 0)
+    for reservation in reservations:
+        date_res = reservation['date'].split('-')
+        reservation['date'] = (date(int(date_res[0]), int(date_res[1]), int(date_res[2])).strftime('%A'))
+        time_stat[reservation['date']][reservation['time']] += 1
+        count_people[reservation['date']][reservation['time']] += int(reservation['people_count'])
+    for weekday in calendar.day_name:
+        plt.plot(list(time_stat[weekday].keys()), list(time_stat[weekday].values()),
+                 color='red', label='Кол-во заказов')
+        plt.plot(list(count_people[weekday].keys()), list(count_people[weekday].values()),
+                 color='green', label='Кол-во людей')
+        plt.xticks(rotation=90)
+        plt.legend(loc='best')
+        plt.grid(True)
+        plt.savefig(f'{weekday}.png')
+        plt.close('all')
+    returned_data = [time_stat, count_people]
+    return returned_data

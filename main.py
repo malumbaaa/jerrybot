@@ -180,15 +180,25 @@ async def print_stat(callback_query: types.CallbackQuery):
         for user in db.get_stat_users():
             await bot.send_message(text=user, chat_id=callback_query.message.chat.id)
         await bot.send_message(text=db.get_stat_order(), chat_id=callback_query.message.chat.id)
+    if separated_data[1] == 'time':
+        messages = db.get_stat_time()
+        for key, value in messages[0].items():
+            caption = f"{key}\nВремя\tЗаказы\tЛюди\n"
+            for time, text in value.items():
+                caption += f"{time}\t\t\t  {text}\t\t\t         {messages[1][key][time]}\n"
+            day = types.input_file.InputFile(f"{key}.png")
+            await bot.send_photo(photo=day, chat_id=callback_query.message.chat.id, caption=caption)
 
 
-@dp.message_handler(state=StateMachine.ADMIN_MESSAGE_STATE)  # Отправка рассылки
+
+
+@dp.message_handler(content_types=[i.lower() for i in list(types.Message.telegram_types)]+['text', 'photo'], state=StateMachine.ADMIN_MESSAGE_STATE)  # Отправка рассылки
 async def send_message(message: types.Message):
     state = dp.current_state(user=message.chat.id)
     users = db.get_all_users()
     print(message.content_type)
     for user in users:
-        await bot.send_message(text=message.text, chat_id=user['telegram_id'])
+        await message.send_copy(chat_id=user['telegram_id'])
     await state.set_state(StateMachine.all()[0])
 
 
@@ -220,8 +230,8 @@ async def receive_contact_message(message: types.Message):
     state = dp.current_state(user=message.chat.id)
     phone_number = message.contact.phone_number
     kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    kb.add(types.KeyboardButton(text="Меню"))
-    kb.add(types.KeyboardButton(text="🪑Забронировать столик"))
+    kb.add(types.KeyboardButton(text="🍽Меню🍽"))
+    kb.add(types.KeyboardButton(text="🪑Забронировать столик🪑"))
     print("phone number " + message.contact.phone_number)
     if db.register_new_user(str(await state.get_data()), str(phone_number), str(message.from_user.id)):
         await message.answer('Вы успешно зарегистрировались', reply_markup=kb)
