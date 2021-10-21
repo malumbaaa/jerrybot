@@ -20,14 +20,17 @@ async def show_category(message: types.Message):
 async def show_food_by_category(callback_query: types.CallbackQuery):
     categories = callback_query.data.split(';')
     food = db.get_food_by_category(categories[1])
-    await callback_query.message.answer_photo(photo=food[0]['photo_id'],
-                                              caption=bold(f"{food[0]['name']}\n\n") +
-                                                      f"{food[0]['description']}\n\n" +
-                                                      bold(f"{food[0]['price']} BYN\n"),
-                                              parse_mode=ParseMode.MARKDOWN,
-                                              reply_markup=keyboards.beautiful_change_of_food(0, len(food),
-                                                                                              categories[1],
-                                                                                              food[0]['name'], 'add'))
+    try:
+        await callback_query.message.answer_photo(photo=food[0]['photo_id'],
+                                                  caption=bold(f"{food[0]['name']}\n\n") +
+                                                          f"{food[0]['description']}\n\n" +
+                                                          bold(f"{food[0]['price']} BYN\n"),
+                                                  parse_mode=ParseMode.MARKDOWN,
+                                                  reply_markup=keyboards.beautiful_change_of_food(0, len(food),
+                                                                                                  categories[1],
+                                                                                                  food[0]['name'], 'add'))
+    except IndexError:
+        await callback_query.message.answer(text="В этой категории нет еды")
     await Menu.already_take_smth.set()
 
 
@@ -74,21 +77,24 @@ async def check_cart(message: types.Message, state: FSMContext):
     data = []
     for food in foods:
         data.append(db.get_food_by_name(food))
-    await message.answer_photo(photo=data[0]['photo_id'],
-                                                  caption=bold(f"{data[0]['name']}\n\n") +
-                                                          f"{data[0]['description']}\n\n" +
-                                                          bold(f"{data[0]['price']} BYN\n"),
-                                                  parse_mode=ParseMode.MARKDOWN,
-                                                  reply_markup=keyboards.beautiful_change_of_food(0, len(data),
-                                                                                                  '',
-                                                                                                  data[0]['name'],
-                                                                                                  'remove'))
-    await Menu.open_cart.set()
-    await state.set_data(order)
-    kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    kb.add(types.KeyboardButton(text="💰Купить💰"))
-    kb.add(types.KeyboardButton(text="🔙Вернуться в главное меню🔙"))
-    await message.answer(text='аа, хз, как это меняь', reply_markup=kb)
+    try:
+        await message.answer_photo(photo=data[0]['photo_id'],
+                                                      caption=bold(f"{data[0]['name']}\n\n") +
+                                                              f"{data[0]['description']}\n\n" +
+                                                              bold(f"{data[0]['price']} BYN\n"),
+                                                      parse_mode=ParseMode.MARKDOWN,
+                                                      reply_markup=keyboards.beautiful_change_of_food(0, len(data),
+                                                                                                      '',
+                                                                                                      data[0]['name'],
+                                                                                                      'remove'))
+        await Menu.open_cart.set()
+        await state.set_data(order)
+        kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        kb.add(types.KeyboardButton(text="💰Купить💰"))
+        kb.add(types.KeyboardButton(text="🔙Вернуться в главное меню🔙"))
+        await message.answer(text='аа, хз, как это меняь', reply_markup=kb)
+    except TypeError:
+        await message.answer(text='Корзина пока пуста')
 
 
 async def change_food_in_cart(callback_query: types.CallbackQuery, state: FSMContext):
@@ -140,7 +146,8 @@ async def remove_food_from_cart(callback_query: types.CallbackQuery,  state: FSM
     data = []
     for food in foods:
         data.append(db.get_food_by_name(food))
-    await callback_query.message.answer_photo(photo=data[0]['photo_id'],
+    try:
+        await callback_query.message.answer_photo(photo=data[0]['photo_id'],
                                caption=bold(f"{data[0]['name']}\n\n") +
                                        f"{data[0]['description']}\n\n" +
                                        bold(f"{data[0]['price']} BYN\n"),
@@ -149,6 +156,25 @@ async def remove_food_from_cart(callback_query: types.CallbackQuery,  state: FSM
                                                                                '',
                                                                                data[0]['name'],
                                                                                'remove'))
+    except TypeError:
+        await callback_query.message.answer(text='В корзине не осталось товаров')
+
+
+async def buy_products(message: types.Message,  state: FSMContext):
+    order = await state.get_data()
+    if order:
+        foods = order['food'].split(';')
+        data = []
+        for food in foods:
+            data.append(db.get_food_by_name(food))
+        db.add_order(message.chat.id, order['food'])
+        await state.reset_state()
+        kb = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        kb.add(types.KeyboardButton(text="🍽Меню🍽"))
+        kb.add(types.KeyboardButton(text="🪑Забронировать столик🪑"))
+        await message.answer(f"Ожидайте заказ", reply_markup=kb)
+    else:
+        await message.answer(f"Сначала закажите что-нибудь")
 
 
 def register_handlers_menu(dp: Dispatcher):
@@ -166,3 +192,5 @@ def register_handlers_menu(dp: Dispatcher):
                                 state=Menu.open_cart)
     dp.register_callback_query_handler(remove_food_from_cart, lambda c: c.data.startswith('cart'),
                                        state=Menu.open_cart)
+    dp.register_message_handler(buy_products, lambda m: m.text.startswith('💰Купить'),
+                                state=Menu.open_cart)

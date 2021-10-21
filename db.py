@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import pymongo
 from config import MONGO_CONNECTION_STRING
 
-from datetime import date
+from datetime import date, time, datetime
 import calendar
 import locale
 
@@ -273,5 +273,24 @@ def get_stat_time():
     return returned_data
 
 
-def add_order():
-    pass
+def add_order(telegram_id, food):
+    user = find_user_by_telegramid(telegram_id)
+    foods = food.split(";")
+    price = 0
+    now = datetime.now()
+    current_time = now.strftime("%H:%M")
+    date_today = date.today()
+    for food in foods:
+        price += int(get_food_by_name(food)['price'])
+    data = {
+        'user_name': user['name'],
+        'user_phone': user['phone'],
+        'telegram_id': user['telegram_id'],
+        'food': food,
+        'price': price,
+        'date': date_today.strftime("%b-%d-%Y"),
+        'time': current_time
+    }
+    db = get_database()
+    orders_collection = db["Orders"]
+    orders_collection.insert_one(data)
