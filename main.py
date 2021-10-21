@@ -177,9 +177,11 @@ async def admin_statistics(message: types.Message):
 async def print_stat(callback_query: types.CallbackQuery):
     separated_data = callback_query.data.split(";")
     if separated_data[1] == 'clients':
-        for user in db.get_stat_users():
-            await bot.send_message(text=user, chat_id=callback_query.message.chat.id)
-        await bot.send_message(text=db.get_stat_order(), chat_id=callback_query.message.chat.id)
+        db.get_stat_users()
+        clients= types.input_file.InputFile("clients.xlsx")
+        await bot.send_document(document=clients, chat_id=callback_query.message.chat.id)
+        all_days = types.input_file.InputFile("all_days.png")
+        await bot.send_photo(caption=db.get_stat_order(), chat_id=callback_query.message.chat.id, photo=all_days)
     if separated_data[1] == 'time':
         messages = db.get_stat_time()
         for key, value in messages[0].items():
@@ -192,7 +194,7 @@ async def print_stat(callback_query: types.CallbackQuery):
 
 
 
-@dp.message_handler(content_types=[i.lower() for i in list(types.Message.telegram_types)]+['text', 'photo'], state=StateMachine.ADMIN_MESSAGE_STATE)  # Отправка рассылки
+@dp.message_handler(content_types=types.ContentType.ANY, state=StateMachine.ADMIN_MESSAGE_STATE)  # Отправка рассылки
 async def send_message(message: types.Message):
     state = dp.current_state(user=message.chat.id)
     users = db.get_all_users()
@@ -221,6 +223,7 @@ async def admin_message(message: types.Message):
         await state.reset_state()  # exit from admin state
         await message.answer("Вы вышли из режима админа", reply_markup=kb)
     else:
+        print(message.content_type)
         await message.answer("Здарова, админ!")
 
 

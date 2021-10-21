@@ -59,4 +59,5 @@ def beautiful_change_of_food(current_food, count_food, category):
     left_btn = InlineKeyboardButton("⬅️", callback_data=f"food;{category};{int(current_food)-1}")
     right_btn = InlineKeyboardButton("➡️", callback_data=f"food;{category};{int(current_food)+1}")
     count_btn = InlineKeyboardButton(f"{current_food+1}/{count_food}", callback_data=f'food;{category};0')
-    return food_changing_kb.add(left_btn, count_btn, right_btn)
+    get_btn = InlineKeyboardButton(f"Заказать", callback_data=f'cart;{category};{current_food}')
+    return food_changing_kb.add(left_btn, count_btn, right_btn, get_btn)

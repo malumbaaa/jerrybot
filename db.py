@@ -9,7 +9,7 @@ import locale
 
 from collections import Counter
 import matplotlib.pyplot as plt
-
+import xlsxwriter
 
 locale.setlocale(locale.LC_ALL, 'ru_RU')
 
@@ -149,12 +149,21 @@ def get_stat_order():  # можно соеденить 2 функции
     all_stat['Общее количество заказов'] = len(all_stat['В среднем людей'])
     all_stat['В среднем людей'] = sum(all_stat['В среднем людей'])/len(all_stat['В среднем людей'])
     max = -1
+    for_graph = []
     for weekday in calendar.day_name:
         count = all_stat['days'].count(weekday)
         all_stat[weekday] = count
+        for_graph.append(count)
         if max < count:
             all_stat['Самый популярный день'] = weekday
             max = count
+    plt.plot(calendar.day_name, for_graph,
+             color='red', label='Кол-во заказов')
+    plt.xticks(rotation=90)
+    plt.legend(loc='best')
+    plt.grid(True)
+    plt.savefig(f'all_days.png')
+    plt.close('all')
     del all_stat['days']
     data = ''
     for key, value in all_stat.items():
@@ -174,6 +183,15 @@ def get_stat_users():
         print(users[reservation['telegram_id']])
         users[reservation['telegram_id']] = users[reservation['telegram_id']]+[reservation,]
     stat_users = []
+    workbook = xlsxwriter.Workbook('clients.xlsx')
+    index = 1
+    worksheet = workbook.add_worksheet('all_clients')
+    worksheet.write(0, 0, 'Имя')
+    worksheet.write(0, 1, 'Телефон')
+    worksheet.write(0, 2, 'Количество заказов')
+    worksheet.write(0, 3, 'Любимый столик')
+    worksheet.write(0, 4, 'Любимый день недели')
+    worksheet.write(0, 5, 'Среднее кол-во людей')
     for key, value in users.items():
         print(key)
         print(value)
@@ -188,6 +206,13 @@ def get_stat_users():
         if len(value) == 0:
             pass
         else:
+            worksheet.write(index, 0, f"{value[0]['user_name']}")
+            worksheet.write(index, 1, f"{value[0]['user_phone']}")
+            worksheet.write(index, 2, f'{len(value)}')
+            worksheet.write(index, 3, f"{Counter([i['table_number'] for i in value]).most_common()[0][0]}")
+            worksheet.write(index, 4, f"{Counter([i['date'] for i in value]).most_common()[0][0]}")
+            worksheet.write(index, 5, f"{sum([int(i['people_count']) for i in value]) / len(value)}")
+            index += 1
             stat_users.append(
                 f'Количество заказов:  {len(value)}\n'+
                 f"Любимый столик:  {Counter([i['table_number'] for i in value]).most_common()[0][0]}\n"+
@@ -196,6 +221,7 @@ def get_stat_users():
                 f"Имя: {value[0]['user_name']}\n"+
                 f"Телефон: {value[0]['user_phone']}\n"
             )
+    workbook.close()
     return stat_users
 
 

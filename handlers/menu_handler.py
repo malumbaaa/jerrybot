@@ -29,16 +29,17 @@ async def change_food_by_callback(callback_query: types.CallbackQuery):
     current_food = int(categories[2])
     if len(food) > current_food >= 0:
         try:
-            await callback_query.message.delete()
-            await callback_query.message.answer_photo(photo=food[current_food]['photo_id'],
-                                                      caption=bold(f"{food[current_food]['name']}\n\n") +
+            # await callback_query.message.delete()
+            next_photo = types.input_media.InputMediaPhoto(str='photo', media=food[current_food]['photo_id'],
+                                                           caption=bold(f"{food[current_food]['name']}\n\n") +
                                                               f"{food[current_food]['description']}\n\n" +
                                                               bold(f"{food[current_food]['price']} BYN\n"),
-                                                      parse_mode=ParseMode.MARKDOWN,
-                                                      reply_markup=keyboards
-                                                      .beautiful_change_of_food(current_food,
-                                                                                len(food),
-                                                                                categories[1]))
+                                                           parse_mode = ParseMode.MARKDOWN)
+            await callback_query.message.edit_media(media=next_photo,
+                                                    reply_markup=keyboards
+                                                   .beautiful_change_of_food(current_food,
+                                                                             len(food),
+                                                                             categories[1]))
         except:
             await callback_query.answer()
     else:
