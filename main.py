@@ -6,7 +6,7 @@ from handlers.adding_dishes import register_handlers_food, AddDish
 import requests
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
 import keyboards
-from handlers.menu_handler import register_handlers_menu
+from handlers.menu_handler import register_handlers_menu, Menu
 
 import db
 from StateMachine import StateMachine

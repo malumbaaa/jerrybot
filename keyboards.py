@@ -54,10 +54,13 @@ def time_choose():
     return time_kb
 
 
-def beautiful_change_of_food(current_food, count_food, category):
+def beautiful_change_of_food(current_food, count_food, category, name, cart_option):
     food_changing_kb = InlineKeyboardMarkup(row_width=3)
     left_btn = InlineKeyboardButton("⬅️", callback_data=f"food;{category};{int(current_food)-1}")
     right_btn = InlineKeyboardButton("➡️", callback_data=f"food;{category};{int(current_food)+1}")
     count_btn = InlineKeyboardButton(f"{current_food+1}/{count_food}", callback_data=f'food;{category};0')
-    get_btn = InlineKeyboardButton(f"Заказать", callback_data=f'cart;{category};{current_food}')
+    if cart_option == 'remove':
+        get_btn = InlineKeyboardButton(f"Убрать из корзины", callback_data=f'cart;{name}')
+    else:
+        get_btn = InlineKeyboardButton(f"Заказать", callback_data=f'cart;{name}')
     return food_changing_kb.add(left_btn, count_btn, right_btn, get_btn)

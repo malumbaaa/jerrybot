@@ -232,6 +232,13 @@ def get_food_by_category(category):
     return food
 
 
+def get_food_by_name(name):
+    db = get_database()
+    food_collection = db['Dishes']
+    food = food_collection.find_one({"name": name})
+    return food
+
+
 def get_stat_time():
     db = get_database()
     reservations = get_all_orders()
@@ -264,3 +271,7 @@ def get_stat_time():
         plt.close('all')
     returned_data = [time_stat, count_people]
     return returned_data
+
+
+def add_order():
+    pass
