@@ -288,7 +288,7 @@ def add_order(telegram_id, food):
         'telegram_id': user['telegram_id'],
         'food': food,
         'price': price,
-        'date': date_today.strftime("%b-%d-%Y"),
+        'date': date_today.strftime("%d-%m-%Y"),
         'time': current_time
     }
     db = get_database()
