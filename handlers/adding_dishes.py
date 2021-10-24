@@ -3,6 +3,7 @@ from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.utils.markdown import *
 from aiogram.types import ParseMode
+from StateMachine import StateMachine
 
 import db
 
@@ -52,12 +53,17 @@ async def dish_photo_handler(message: types.message, state: FSMContext):
     price = (await state.get_data('price'))['price']
     photo_id = message.photo[-1].file_id
     db.add_dish(name, category, description, price, photo_id)
-    await state.reset_state()
+    kb = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    kb.add(types.KeyboardButton(text="✉Отправить рассылку✉"))
+    kb.add(types.KeyboardButton(text="📊Посмотреть статистику📊"))
+    kb.add(types.KeyboardButton(text="🍽Добавить блюдо🍽"))
+    kb.add(types.KeyboardButton(text="❌Выйти из режима админа❌"))
+    await state.set_state(StateMachine.all()[0])
     await message.answer_photo(photo=photo_id,
                                caption=bold(f"{name}\n\n") +
                                        f"{description}\n\n" +
                                        bold(f"{price} BYN\n"),
-                               parse_mode=ParseMode.MARKDOWN)
+                               parse_mode=ParseMode.MARKDOWN, reply_markup=kb)
 
 
 def register_handlers_food(dp: Dispatcher):

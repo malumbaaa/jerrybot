@@ -192,15 +192,26 @@ async def print_stat(callback_query: types.CallbackQuery):
             await bot.send_photo(photo=day, chat_id=callback_query.message.chat.id, caption=caption)
 
 
-
-
 @dp.message_handler(content_types=types.ContentType.ANY, state=StateMachine.ADMIN_MESSAGE_STATE)  # Отправка рассылки
 async def send_message(message: types.Message):
     state = dp.current_state(user=message.chat.id)
-    users = db.get_all_users()
     print(message.content_type)
-    for user in users:
-        await message.send_copy(chat_id=user['telegram_id'])
+    await state.set_data({'message': message})
+    await message.send_copy(chat_id=message.chat.id, reply_markup=keyboards.send_message())
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('send'), state=StateMachine.ADMIN_MESSAGE_STATE)  # Подтверждение рассылки
+async def accepted_message(callback_query: types.CallbackQuery):
+    separated_data = callback_query.data.split(";")
+    users = db.get_all_users()
+    state = dp.current_state(user=callback_query.message.chat.id)
+    if separated_data[1] == 'go':
+        message = await state.get_data()
+        message = message['message']
+        for user in users:
+            await message.send_copy(chat_id=user['telegram_id'])
+    elif separated_data[1] == 'reject':
+        await callback_query.message.answer(text='Рассылка отменена')
     await state.set_state(StateMachine.all()[0])
 
 

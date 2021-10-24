@@ -64,3 +64,10 @@ def beautiful_change_of_food(current_food, count_food, category, name, cart_opti
     else:
         get_btn = InlineKeyboardButton(f"Заказать", callback_data=f'cart;{name}')
     return food_changing_kb.add(left_btn, count_btn, right_btn, get_btn)
+
+
+def send_message():
+    send_message_kb = InlineKeyboardMarkup(row_width=1)
+    send_btn = InlineKeyboardButton("Отправить", callback_data=f"send;go")
+    reject_btn = InlineKeyboardButton("Не отправлять", callback_data=f"send;reject")
+    return send_message_kb.add(send_btn, reject_btn)
