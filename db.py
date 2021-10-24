@@ -273,9 +273,11 @@ def get_stat_time():
     return returned_data
 
 
-def add_order(telegram_id, food):
+def add_order(telegram_id, food, table=4):
+    print(food)
     user = find_user_by_telegramid(telegram_id)
     foods = food.split(";")
+    food_to_db = ','.join(foods)
     price = 0
     now = datetime.now()
     current_time = now.strftime("%H:%M")
@@ -286,11 +288,36 @@ def add_order(telegram_id, food):
         'user_name': user['name'],
         'user_phone': user['phone'],
         'telegram_id': user['telegram_id'],
-        'food': food,
+        'food': food_to_db,
         'price': price,
         'date': date_today.strftime("%d-%m-%Y"),
-        'time': current_time
+        'time': current_time,
+        'table': table
     }
     db = get_database()
     orders_collection = db["Orders"]
     orders_collection.insert_one(data)
+
+
+def stat_tables(table: int) -> None:
+    db = get_database()
+    orders_collection = db["Orders"]
+    orders_table = list(orders_collection.find({"table": table}))
+    workbook = xlsxwriter.Workbook('orders.xlsx')
+    index = 1
+    worksheet = workbook.add_worksheet(f'table_{table}')
+    worksheet.write(0, 0, 'Имя')
+    worksheet.write(0, 1, 'Телефон')
+    worksheet.write(0, 2, 'Еда')
+    worksheet.write(0, 3, 'Стоимость')
+    worksheet.write(0, 4, 'Дата')
+    worksheet.write(0, 5, 'Время')
+    for order in orders_table:
+        worksheet.write(index, 0, f"{order['user_name']}")
+        worksheet.write(index, 1, f"{order['user_phone']}")
+        worksheet.write(index, 2, f'{order["food"]}')
+        worksheet.write(index, 3, f"{order['price']}")
+        worksheet.write(index, 4, f"{order['date']}")
+        worksheet.write(index, 5, f"{order['time']}")
+        index += 1
+    workbook.close()

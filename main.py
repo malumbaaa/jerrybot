@@ -170,6 +170,7 @@ async def admin_statistics(message: types.Message):
     kb = InlineKeyboardMarkup()
     kb.add(types.InlineKeyboardButton('Клиенты', callback_data='stat;clients'))
     kb.add(types.InlineKeyboardButton('Время', callback_data='stat;time'))
+    kb.add(types.InlineKeyboardButton('Заказы', callback_data='stat;orders'))
     await message.answer('Выберите статистику:', reply_markup=kb)
 
 
@@ -190,6 +191,17 @@ async def print_stat(callback_query: types.CallbackQuery):
                 caption += f"{time}\t\t\t  {text}\t\t\t         {messages[1][key][time]}\n"
             day = types.input_file.InputFile(f"{key}.png")
             await bot.send_photo(photo=day, chat_id=callback_query.message.chat.id, caption=caption)
+    if separated_data[1] == 'orders':
+        await callback_query.message.answer(text="Выберите столик по которому хотите получить статистику",
+                                            reply_markup=keyboards.table_choose(5, 2021, 10, 24))
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('table'), state=StateMachine.ADMIN)
+async def print_order_stat(callback_query: types.CallbackQuery):
+    separated_date = callback_query.data.split(';')
+    db.stat_tables(int(separated_date[1]))
+    orders = types.input_file.InputFile("orders.xlsx")
+    await bot.send_document(document=orders, chat_id=callback_query.message.chat.id)
 
 
 @dp.message_handler(content_types=types.ContentType.ANY, state=StateMachine.ADMIN_MESSAGE_STATE)  # Отправка рассылки

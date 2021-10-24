@@ -162,6 +162,7 @@ async def remove_food_from_cart(callback_query: types.CallbackQuery,  state: FSM
 
 async def buy_products(message: types.Message,  state: FSMContext):
     order = await state.get_data()
+    print(f"food {order['food']}")
     if order:
         foods = order['food'].split(';')
         data = []
