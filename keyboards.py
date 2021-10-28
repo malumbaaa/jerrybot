@@ -61,6 +61,8 @@ def beautiful_change_of_food(current_food, count_food, category, name, cart_opti
     count_btn = InlineKeyboardButton(f"{current_food+1}/{count_food}", callback_data=f'food;{category};0')
     if cart_option == 'remove':
         get_btn = InlineKeyboardButton(f"Убрать из корзины", callback_data=f'cart;{name}')
+    if cart_option == 'delete':
+        get_btn = InlineKeyboardButton(f"Удалить блюдо", callback_data=f'delete;{name}')
     else:
         get_btn = InlineKeyboardButton(f"Заказать", callback_data=f'cart;{name}')
     return food_changing_kb.add(left_btn, count_btn, right_btn, get_btn)

@@ -1,10 +1,11 @@
-# Ссылка на статью про машину состояний, почитай обязательно перед тем, как делать
-# https://surik00.gitbooks.io/aiogram-lessons/content/chapter3.html
 import json
 import logging
+
+from aiogram.utils.markdown import bold
+
 from handlers.adding_dishes import register_handlers_food, AddDish
 import requests
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, ParseMode
 import keyboards
 from handlers.menu_handler import register_handlers_menu, Menu
 
@@ -23,19 +24,6 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.TG_API_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 dp.middleware.setup(LoggingMiddleware())
-
-
-@dp.message_handler(commands=['anekdot'])
-async def random_anekdot(message: types.Message):
-    try:
-        url = "http://rzhunemogu.ru/RandJSON.aspx?CType=11"
-        r = requests.get(url=url)
-        raw = r.text.replace("\n", " ").replace("\r", " ")
-        print(raw)
-        anekdot = json.loads(raw)
-        await message.answer(anekdot["content"])
-    except json.decoder.JSONDecodeError:
-        await message.answer("Что-то пошло не так :(\nПопробуйте еще раз")
 
 
 @dp.message_handler(state=StateMachine.PEOPLE_NUMBER)  # функция вывода заказа
@@ -114,6 +102,7 @@ async def set_admin_state(message: types.Message):
         kb.add(types.KeyboardButton(text="✉Отправить рассылку✉"))
         kb.add(types.KeyboardButton(text="📊Посмотреть статистику📊"))
         kb.add(types.KeyboardButton(text="🍽Добавить блюдо🍽"))
+        kb.add(types.KeyboardButton(text="🗑Удалить блюдо🗑"))
         kb.add(types.KeyboardButton(text="❌Выйти из режима админа❌"))
         await state.set_state(StateMachine.all()[0])  # set admin state
         await message.answer("Вы вошли в режим админа", reply_markup=kb)
@@ -137,6 +126,23 @@ async def category_message(message: types.Message):
                          reply_markup=types.ReplyKeyboardRemove())
 
 
+@dp.callback_query_handler(lambda c: c.data.startswith('category'), state=StateMachine.DELETE_DISH)
+async def category_delete_dish_callback(callback_query: types.CallbackQuery):
+    separated_data = callback_query.data.split(";")
+    state = dp.current_state(user=callback_query.message.chat.id)
+    food = db.get_food_by_category(separated_data[1])
+    kb = keyboards.beautiful_change_of_food(0, food, separated_data[1], food[0]['name'], 'delete')
+    try:
+        await callback_query.message.answer_photo(photo=food[0]['photo_id'],
+                                                  caption=bold(f"{food[0]['name']}\n\n") +
+                                                          f"{food[0]['description']}\n\n" +
+                                                          bold(f"{food[0]['price']} BYN\n"),
+                                                  parse_mode=ParseMode.MARKDOWN,
+                                                  reply_markup=kb)
+    except IndexError:
+        await callback_query.message.answer(text="В этой категории нет еды")
+
+
 @dp.callback_query_handler(lambda c: c.data.startswith('category'), state=StateMachine.ADMIN)
 async def category_callback(callback_query: types.CallbackQuery):
     separated_data = callback_query.data.split(";")
@@ -150,10 +156,43 @@ async def category_callback(callback_query: types.CallbackQuery):
     else:
         await state.set_state(AddDish.waiting_for_dish_name)
         await state.update_data(category=separated_data[1])
-        await bot.edit_message_text(text=f"Напишите название блюда\n{callback_query.data}",
+        await bot.edit_message_text(text=f"Категория: {separated_data[1]}\nНапишите название блюда",
                                     chat_id=callback_query.message.chat.id,
                                     message_id=callback_query.message.message_id)
         await bot.answer_callback_query(callback_query.id)
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('food'), state=StateMachine.DELETE_DISH)
+async def change_delete_food_by_callback(callback_query: types.CallbackQuery):
+    categories = callback_query.data.split(';')
+    food = db.get_food_by_category(categories[1])
+    current_food = int(categories[2])
+    if len(food) > current_food >= 0:
+        try:
+            next_photo = types.input_media.InputMediaPhoto(str='photo', media=food[current_food]['photo_id'],
+                                                           caption=bold(f"{food[current_food]['name']}\n\n") +
+                                                              f"{food[current_food]['description']}\n\n" +
+                                                              bold(f"{food[current_food]['price']} BYN\n"),
+                                                           parse_mode=ParseMode.MARKDOWN)
+            await callback_query.message.edit_media(media=next_photo,
+                                                    reply_markup=keyboards
+                                                   .beautiful_change_of_food(current_food,
+                                                                             len(food),
+                                                                             categories[1],
+                                                                             food[current_food]['name'], 'add'))
+        except:
+            await callback_query.answer()
+    else:
+        await callback_query.answer()
+
+
+@dp.message_handler(lambda m: m.text.startswith('🗑Удалить блюдо🗑'), state=StateMachine.ADMIN)
+@dp.message_handler(commands=['delete'], state=StateMachine.ADMIN)
+async def delete_dish(message: types.Message):
+    state = dp.current_state(user=message.chat.id)
+    await state.set_state(StateMachine.DELETE_DISH)
+    kb = keyboards.get_categories_kb()
+    await message.answer('Выберите категорию:', reply_markup=kb)
 
 
 @dp.message_handler(lambda m: m.text.startswith('🍽Добавить блюдо🍽'), state=StateMachine.ADMIN)
@@ -287,7 +326,6 @@ async def register_message(message: types.Message):
 async def reserve(message: types.Message):
     calendar_keyboard = tgcalendar.create_calendar()
     await message.answer("Пожалуйста, выберите дату:", reply_markup=calendar_keyboard)
-
 
 
 @dp.callback_query_handler(lambda c: c.data, state=StateMachine.ADMIN)
