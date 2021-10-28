@@ -54,9 +54,22 @@ def time_choose():
     return time_kb
 
 
-def beautiful_change_of_food(current_food, count_food, category):
+def beautiful_change_of_food(current_food, count_food, category, name, cart_option):
     food_changing_kb = InlineKeyboardMarkup(row_width=3)
     left_btn = InlineKeyboardButton("⬅️", callback_data=f"food;{category};{int(current_food)-1}")
     right_btn = InlineKeyboardButton("➡️", callback_data=f"food;{category};{int(current_food)+1}")
     count_btn = InlineKeyboardButton(f"{current_food+1}/{count_food}", callback_data=f'food;{category};0')
-    return food_changing_kb.add(left_btn, count_btn, right_btn)
+    if cart_option == 'remove':
+        get_btn = InlineKeyboardButton(f"Убрать из корзины", callback_data=f'cart;{name}')
+    if cart_option == 'delete':
+        get_btn = InlineKeyboardButton(f"Удалить блюдо", callback_data=f'delete;{name}')
+    else:
+        get_btn = InlineKeyboardButton(f"Заказать", callback_data=f'cart;{name}')
+    return food_changing_kb.add(left_btn, count_btn, right_btn, get_btn)
+
+
+def send_message():
+    send_message_kb = InlineKeyboardMarkup(row_width=1)
+    send_btn = InlineKeyboardButton("Отправить", callback_data=f"send;go")
+    reject_btn = InlineKeyboardButton("Не отправлять", callback_data=f"send;reject")
+    return send_message_kb.add(send_btn, reject_btn)

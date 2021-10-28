@@ -1,12 +1,13 @@
-# Ссылка на статью про машину состояний, почитай обязательно перед тем, как делать
-# https://surik00.gitbooks.io/aiogram-lessons/content/chapter3.html
 import json
 import logging
+
+from aiogram.utils.markdown import bold
+
 from handlers.adding_dishes import register_handlers_food, AddDish
 import requests
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, ParseMode
 import keyboards
-from handlers.menu_handler import register_handlers_menu
+from handlers.menu_handler import register_handlers_menu, Menu
 
 import db
 from StateMachine import StateMachine
@@ -23,19 +24,6 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.TG_API_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 dp.middleware.setup(LoggingMiddleware())
-
-
-@dp.message_handler(commands=['anekdot'])
-async def random_anekdot(message: types.Message):
-    try:
-        url = "http://rzhunemogu.ru/RandJSON.aspx?CType=11"
-        r = requests.get(url=url)
-        raw = r.text.replace("\n", " ").replace("\r", " ")
-        print(raw)
-        anekdot = json.loads(raw)
-        await message.answer(anekdot["content"])
-    except json.decoder.JSONDecodeError:
-        await message.answer("Что-то пошло не так :(\nПопробуйте еще раз")
 
 
 @dp.message_handler(state=StateMachine.PEOPLE_NUMBER)  # функция вывода заказа
@@ -114,6 +102,7 @@ async def set_admin_state(message: types.Message):
         kb.add(types.KeyboardButton(text="✉Отправить рассылку✉"))
         kb.add(types.KeyboardButton(text="📊Посмотреть статистику📊"))
         kb.add(types.KeyboardButton(text="🍽Добавить блюдо🍽"))
+        kb.add(types.KeyboardButton(text="🗑Удалить блюдо🗑"))
         kb.add(types.KeyboardButton(text="❌Выйти из режима админа❌"))
         await state.set_state(StateMachine.all()[0])  # set admin state
         await message.answer("Вы вошли в режим админа", reply_markup=kb)
@@ -137,6 +126,23 @@ async def category_message(message: types.Message):
                          reply_markup=types.ReplyKeyboardRemove())
 
 
+@dp.callback_query_handler(lambda c: c.data.startswith('category'), state=StateMachine.DELETE_DISH)
+async def category_delete_dish_callback(callback_query: types.CallbackQuery):
+    separated_data = callback_query.data.split(";")
+    state = dp.current_state(user=callback_query.message.chat.id)
+    food = db.get_food_by_category(separated_data[1])
+    kb = keyboards.beautiful_change_of_food(0, food, separated_data[1], food[0]['name'], 'delete')
+    try:
+        await callback_query.message.answer_photo(photo=food[0]['photo_id'],
+                                                  caption=bold(f"{food[0]['name']}\n\n") +
+                                                          f"{food[0]['description']}\n\n" +
+                                                          bold(f"{food[0]['price']} BYN\n"),
+                                                  parse_mode=ParseMode.MARKDOWN,
+                                                  reply_markup=kb)
+    except IndexError:
+        await callback_query.message.answer(text="В этой категории нет еды")
+
+
 @dp.callback_query_handler(lambda c: c.data.startswith('category'), state=StateMachine.ADMIN)
 async def category_callback(callback_query: types.CallbackQuery):
     separated_data = callback_query.data.split(";")
@@ -150,10 +156,43 @@ async def category_callback(callback_query: types.CallbackQuery):
     else:
         await state.set_state(AddDish.waiting_for_dish_name)
         await state.update_data(category=separated_data[1])
-        await bot.edit_message_text(text=f"Напишите название блюда\n{callback_query.data}",
+        await bot.edit_message_text(text=f"Категория: {separated_data[1]}\nНапишите название блюда",
                                     chat_id=callback_query.message.chat.id,
                                     message_id=callback_query.message.message_id)
         await bot.answer_callback_query(callback_query.id)
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('food'), state=StateMachine.DELETE_DISH)
+async def change_delete_food_by_callback(callback_query: types.CallbackQuery):
+    categories = callback_query.data.split(';')
+    food = db.get_food_by_category(categories[1])
+    current_food = int(categories[2])
+    if len(food) > current_food >= 0:
+        try:
+            next_photo = types.input_media.InputMediaPhoto(str='photo', media=food[current_food]['photo_id'],
+                                                           caption=bold(f"{food[current_food]['name']}\n\n") +
+                                                              f"{food[current_food]['description']}\n\n" +
+                                                              bold(f"{food[current_food]['price']} BYN\n"),
+                                                           parse_mode=ParseMode.MARKDOWN)
+            await callback_query.message.edit_media(media=next_photo,
+                                                    reply_markup=keyboards
+                                                   .beautiful_change_of_food(current_food,
+                                                                             len(food),
+                                                                             categories[1],
+                                                                             food[current_food]['name'], 'add'))
+        except:
+            await callback_query.answer()
+    else:
+        await callback_query.answer()
+
+
+@dp.message_handler(lambda m: m.text.startswith('🗑Удалить блюдо🗑'), state=StateMachine.ADMIN)
+@dp.message_handler(commands=['delete'], state=StateMachine.ADMIN)
+async def delete_dish(message: types.Message):
+    state = dp.current_state(user=message.chat.id)
+    await state.set_state(StateMachine.DELETE_DISH)
+    kb = keyboards.get_categories_kb()
+    await message.answer('Выберите категорию:', reply_markup=kb)
 
 
 @dp.message_handler(lambda m: m.text.startswith('🍽Добавить блюдо🍽'), state=StateMachine.ADMIN)
@@ -170,6 +209,7 @@ async def admin_statistics(message: types.Message):
     kb = InlineKeyboardMarkup()
     kb.add(types.InlineKeyboardButton('Клиенты', callback_data='stat;clients'))
     kb.add(types.InlineKeyboardButton('Время', callback_data='stat;time'))
+    kb.add(types.InlineKeyboardButton('Заказы', callback_data='stat;orders'))
     await message.answer('Выберите статистику:', reply_markup=kb)
 
 
@@ -177,18 +217,52 @@ async def admin_statistics(message: types.Message):
 async def print_stat(callback_query: types.CallbackQuery):
     separated_data = callback_query.data.split(";")
     if separated_data[1] == 'clients':
-        for user in db.get_stat_users():
-            await bot.send_message(text=user, chat_id=callback_query.message.chat.id)
-        await bot.send_message(text=db.get_stat_order(), chat_id=callback_query.message.chat.id)
+        db.get_stat_users()
+        clients= types.input_file.InputFile("clients.xlsx")
+        await bot.send_document(document=clients, chat_id=callback_query.message.chat.id)
+        all_days = types.input_file.InputFile("all_days.png")
+        await bot.send_photo(caption=db.get_stat_order(), chat_id=callback_query.message.chat.id, photo=all_days)
+    if separated_data[1] == 'time':
+        messages = db.get_stat_time()
+        for key, value in messages[0].items():
+            caption = f"{key}\nВремя\tЗаказы\tЛюди\n"
+            for time, text in value.items():
+                caption += f"{time}\t\t\t  {text}\t\t\t         {messages[1][key][time]}\n"
+            day = types.input_file.InputFile(f"{key}.png")
+            await bot.send_photo(photo=day, chat_id=callback_query.message.chat.id, caption=caption)
+    if separated_data[1] == 'orders':
+        await callback_query.message.answer(text="Выберите столик по которому хотите получить статистику",
+                                            reply_markup=keyboards.table_choose(5, 2021, 10, 24))
 
 
-@dp.message_handler(state=StateMachine.ADMIN_MESSAGE_STATE)  # Отправка рассылки
+@dp.callback_query_handler(lambda c: c.data.startswith('table'), state=StateMachine.ADMIN)
+async def print_order_stat(callback_query: types.CallbackQuery):
+    separated_date = callback_query.data.split(';')
+    db.stat_tables(int(separated_date[1]))
+    orders = types.input_file.InputFile("orders.xlsx")
+    await bot.send_document(document=orders, chat_id=callback_query.message.chat.id)
+
+
+@dp.message_handler(content_types=types.ContentType.ANY, state=StateMachine.ADMIN_MESSAGE_STATE)  # Отправка рассылки
 async def send_message(message: types.Message):
     state = dp.current_state(user=message.chat.id)
-    users = db.get_all_users()
     print(message.content_type)
-    for user in users:
-        await bot.send_message(text=message.text, chat_id=user['telegram_id'])
+    await state.set_data({'message': message})
+    await message.send_copy(chat_id=message.chat.id, reply_markup=keyboards.send_message())
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('send'), state=StateMachine.ADMIN_MESSAGE_STATE)  # Подтверждение рассылки
+async def accepted_message(callback_query: types.CallbackQuery):
+    separated_data = callback_query.data.split(";")
+    users = db.get_all_users()
+    state = dp.current_state(user=callback_query.message.chat.id)
+    if separated_data[1] == 'go':
+        message = await state.get_data()
+        message = message['message']
+        for user in users:
+            await message.send_copy(chat_id=user['telegram_id'])
+    elif separated_data[1] == 'reject':
+        await callback_query.message.answer(text='Рассылка отменена')
     await state.set_state(StateMachine.all()[0])
 
 
@@ -211,6 +285,7 @@ async def admin_message(message: types.Message):
         await state.reset_state()  # exit from admin state
         await message.answer("Вы вышли из режима админа", reply_markup=kb)
     else:
+        print(message.content_type)
         await message.answer("Здарова, админ!")
 
 
@@ -220,8 +295,8 @@ async def receive_contact_message(message: types.Message):
     state = dp.current_state(user=message.chat.id)
     phone_number = message.contact.phone_number
     kb = ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-    kb.add(types.KeyboardButton(text="Меню"))
-    kb.add(types.KeyboardButton(text="🪑Забронировать столик"))
+    kb.add(types.KeyboardButton(text="🍽Меню🍽"))
+    kb.add(types.KeyboardButton(text="🪑Забронировать столик🪑"))
     print("phone number " + message.contact.phone_number)
     if db.register_new_user(str(await state.get_data()), str(phone_number), str(message.from_user.id)):
         await message.answer('Вы успешно зарегистрировались', reply_markup=kb)
@@ -251,7 +326,6 @@ async def register_message(message: types.Message):
 async def reserve(message: types.Message):
     calendar_keyboard = tgcalendar.create_calendar()
     await message.answer("Пожалуйста, выберите дату:", reply_markup=calendar_keyboard)
-
 
 
 @dp.callback_query_handler(lambda c: c.data, state=StateMachine.ADMIN)
