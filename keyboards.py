@@ -1,5 +1,7 @@
 import json
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+from aiogram import types
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 
 import db
 
@@ -10,6 +12,16 @@ def table_choose(table_count: int, year, month, day):
     for i in range(table_count):
         table_kb.add(InlineKeyboardButton(f"Стол №{i+1}", callback_data=f"table;{i+1};{year};{month};{day}"))
     return table_kb
+
+
+def admin_keyboard() -> ReplyKeyboardMarkup:
+    kb = ReplyKeyboardMarkup(resize_keyboard=True)
+    kb.add(types.KeyboardButton(text="✉Отправить рассылку✉"))
+    kb.add(types.KeyboardButton(text="📊Посмотреть статистику📊"))
+    kb.add(types.KeyboardButton(text="🍽Добавить блюдо🍽"))
+    kb.add(types.KeyboardButton(text="🗑Удалить блюдо🗑"))
+    kb.add(types.KeyboardButton(text="❌Выйти из режима админа❌"))
+    return kb
 
 
 def get_reserved_time(date: str, table: str) -> InlineKeyboardMarkup:

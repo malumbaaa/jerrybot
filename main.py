@@ -98,14 +98,9 @@ async def table_choose_callback(callback_query: types.CallbackQuery):
 async def set_admin_state(message: types.Message):
     if str(message.from_user.id) in config.ADMIN_IDS:
         state = dp.current_state(user=message.chat.id)
-        kb = ReplyKeyboardMarkup(resize_keyboard=True)
-        kb.add(types.KeyboardButton(text="✉Отправить рассылку✉"))
-        kb.add(types.KeyboardButton(text="📊Посмотреть статистику📊"))
-        kb.add(types.KeyboardButton(text="🍽Добавить блюдо🍽"))
-        kb.add(types.KeyboardButton(text="🗑Удалить блюдо🗑"))
-        kb.add(types.KeyboardButton(text="❌Выйти из режима админа❌"))
+        admin_kb = keyboards.admin_keyboard()
         await state.set_state(StateMachine.all()[0])  # set admin state
-        await message.answer("Вы вошли в режим админа", reply_markup=kb)
+        await message.answer("Вы вошли в режим админа", reply_markup=admin_kb)
     else:
         await message.answer("Эта функция недоступна для вас")
 
@@ -126,12 +121,12 @@ async def category_message(message: types.Message):
                          reply_markup=types.ReplyKeyboardRemove())
 
 
-@dp.callback_query_handler(lambda c: c.data.startswith('category'), state=StateMachine.DELETE_DISH)
+@dp.callback_query_handler(lambda c: c.data.startswith('category'), state=StateMachine.ADMIN_DELETE_DISH)
 async def category_delete_dish_callback(callback_query: types.CallbackQuery):
     separated_data = callback_query.data.split(";")
     state = dp.current_state(user=callback_query.message.chat.id)
     food = db.get_food_by_category(separated_data[1])
-    kb = keyboards.beautiful_change_of_food(0, food, separated_data[1], food[0]['name'], 'delete')
+    kb = keyboards.beautiful_change_of_food(0, len(food), separated_data[1], food[0]['name'], 'delete')
     try:
         await callback_query.message.answer_photo(photo=food[0]['photo_id'],
                                                   caption=bold(f"{food[0]['name']}\n\n") +
@@ -139,6 +134,7 @@ async def category_delete_dish_callback(callback_query: types.CallbackQuery):
                                                           bold(f"{food[0]['price']} BYN\n"),
                                                   parse_mode=ParseMode.MARKDOWN,
                                                   reply_markup=kb)
+        await callback_query.answer()
     except IndexError:
         await callback_query.message.answer(text="В этой категории нет еды")
 
@@ -148,7 +144,7 @@ async def category_callback(callback_query: types.CallbackQuery):
     separated_data = callback_query.data.split(";")
     state = dp.current_state(user=callback_query.message.chat.id)
     if separated_data[1] == "addnew":
-        await state.set_state(StateMachine.all()[2])  # admin_new_category state
+        await state.set_state(StateMachine.all()[3])  # admin_new_category state
         await bot.edit_message_text(text="Напишите название категории",
                                     chat_id=callback_query.message.chat.id,
                                     message_id=callback_query.message.message_id)
@@ -162,7 +158,27 @@ async def category_callback(callback_query: types.CallbackQuery):
         await bot.answer_callback_query(callback_query.id)
 
 
-@dp.callback_query_handler(lambda c: c.data.startswith('food'), state=StateMachine.DELETE_DISH)
+@dp.message_handler(lambda m: m.text.startswith('❌Выйти из режима удаления❌'), state=StateMachine.ADMIN_DELETE_DISH)
+# @dp.callback_query_handler(lambda c: c.data.startswith('exitDeletion'), state=StateMachine.ADMIN_DELETE_DISH)
+async def exit_delete_dish(message: types.Message):
+    state = dp.current_state(user=message.chat.id)
+    await state.set_state(StateMachine.all()[0])  # set admin state
+    admin_kb = keyboards.admin_keyboard()
+    await message.answer("Вы вышли из режима удаления", reply_markup=admin_kb)
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('delete'), state=StateMachine.ADMIN_DELETE_DISH)
+async def delete_dish(callback_query: types.CallbackQuery):
+    separated_data = callback_query.data.split(';')
+    name = separated_data[1]
+    db.delete_food_by_name(name)
+    exit_deletion_markup = InlineKeyboardMarkup(row_width=1)
+    exit_btn = InlineKeyboardButton("Выйти из режима удаления", callback_data=f"exitDeletion")
+    exit_deletion_markup.add(exit_btn)
+    await callback_query.message.answer(f"Блюдо {name} удалено", reply_markup=exit_deletion_markup)
+
+
+@dp.callback_query_handler(lambda c: c.data.startswith('food'), state=StateMachine.ADMIN_DELETE_DISH)
 async def change_delete_food_by_callback(callback_query: types.CallbackQuery):
     categories = callback_query.data.split(';')
     food = db.get_food_by_category(categories[1])
@@ -179,7 +195,8 @@ async def change_delete_food_by_callback(callback_query: types.CallbackQuery):
                                                    .beautiful_change_of_food(current_food,
                                                                              len(food),
                                                                              categories[1],
-                                                                             food[current_food]['name'], 'add'))
+                                                                             food[current_food]['name'], 'delete'))
+            await callback_query.answer()
         except:
             await callback_query.answer()
     else:
@@ -190,7 +207,10 @@ async def change_delete_food_by_callback(callback_query: types.CallbackQuery):
 @dp.message_handler(commands=['delete'], state=StateMachine.ADMIN)
 async def delete_dish(message: types.Message):
     state = dp.current_state(user=message.chat.id)
-    await state.set_state(StateMachine.DELETE_DISH)
+    await state.set_state(StateMachine.all()[1])
+    deletion_kb = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
+    deletion_kb.add(types.KeyboardButton(text="❌Выйти из режима удаления❌"))
+    await message.answer("Режим удаления блюд", reply_markup=deletion_kb)
     kb = keyboards.get_categories_kb()
     await message.answer('Выберите категорию:', reply_markup=kb)
 
@@ -270,7 +290,7 @@ async def accepted_message(callback_query: types.CallbackQuery):
 @dp.message_handler(commands=['send_message'], state=StateMachine.ADMIN)
 async def admin_message(message: types.Message):
     state = dp.current_state(user=message.chat.id)
-    await state.set_state(StateMachine.all()[1])
+    await state.set_state(StateMachine.all()[2])
     await bot.send_message(text='Введите сообщение, которое хотите отправить: ', chat_id=message.chat.id)
 
 
@@ -318,7 +338,7 @@ async def register_message(message: types.Message):
         await state.set_data(message.text)
         await message.answer(f"Нажмите кнопку ниже, чтобы поделиться с номером телефона", reply_markup=kb)
     await state.set_data(name)
-    await state.set_state(StateMachine.all()[6])  # set registration_phone_state
+    await state.set_state(StateMachine.all()[7])  # set registration_phone_state
 
 
 @dp.message_handler(lambda m: m.text.startswith('🪑Забронировать столик'))
@@ -368,7 +388,7 @@ async def reg(message: types.Message):
         await message.answer(f"Вы уже зарегистрированы", reply_markup=kb)
     else:
         state = dp.current_state(user=message.chat.id)
-        await state.set_state(StateMachine.all()[5])  # registration_name_state
+        await state.set_state(StateMachine.all()[6])  # registration_name_state
         await message.answer("Напишите свое имя")
 
 
