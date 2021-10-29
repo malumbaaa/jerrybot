@@ -1,5 +1,7 @@
 import json
-from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+
+from aiogram import types
+from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 
 import db
 
@@ -10,6 +12,16 @@ def table_choose(table_count: int, year, month, day):
     for i in range(table_count):
         table_kb.add(InlineKeyboardButton(f"Стол №{i+1}", callback_data=f"table;{i+1};{year};{month};{day}"))
     return table_kb
+
+
+def admin_keyboard() -> ReplyKeyboardMarkup:
+    kb = ReplyKeyboardMarkup(resize_keyboard=True)
+    kb.add(types.KeyboardButton(text="✉Отправить рассылку✉"))
+    kb.add(types.KeyboardButton(text="📊Посмотреть статистику📊"))
+    kb.add(types.KeyboardButton(text="🍽Добавить блюдо🍽"))
+    kb.add(types.KeyboardButton(text="🗑Удалить блюдо🗑"))
+    kb.add(types.KeyboardButton(text="❌Выйти из режима админа❌"))
+    return kb
 
 
 def get_reserved_time(date: str, table: str) -> InlineKeyboardMarkup:
@@ -61,6 +73,8 @@ def beautiful_change_of_food(current_food, count_food, category, name, cart_opti
     count_btn = InlineKeyboardButton(f"{current_food+1}/{count_food}", callback_data=f'food;{category};0')
     if cart_option == 'remove':
         get_btn = InlineKeyboardButton(f"Убрать из корзины", callback_data=f'cart;{name}')
+    if cart_option == 'delete':
+        get_btn = InlineKeyboardButton(f"Удалить блюдо", callback_data=f'delete;{name}')
     else:
         get_btn = InlineKeyboardButton(f"Заказать", callback_data=f'cart;{name}')
     return food_changing_kb.add(left_btn, count_btn, right_btn, get_btn)
