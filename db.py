@@ -248,7 +248,6 @@ def delete_food_by_name(name: str) -> bool:
     return True
 
 
-
 def get_stat_time():
     db = get_database()
     reservations = get_all_orders()

@@ -1,6 +1,7 @@
 import json
 import logging
 
+from aiogram.dispatcher import FSMContext
 from aiogram.utils.markdown import bold
 
 from handlers.adding_dishes import register_handlers_food, AddDish
@@ -103,6 +104,12 @@ async def set_admin_state(message: types.Message):
         await message.answer("Вы вошли в режим админа", reply_markup=admin_kb)
     else:
         await message.answer("Эта функция недоступна для вас")
+
+
+@dp.message_handler(lambda m: m.text.startswith('Test Qr-Code'), state=StateMachine.ADMIN)
+async def test_qr_code(message: types.Message, state: FSMContext):
+    await message.answer("Отправьте фотографию с QR кодом")
+    await Menu.qr_scan.set()
 
 
 @dp.message_handler(commands=['reservations'], state=StateMachine.ADMIN) # функция вывода календаря для админа

@@ -17,6 +17,7 @@ def table_choose(table_count: int, year, month, day):
 def admin_keyboard() -> ReplyKeyboardMarkup:
     kb = ReplyKeyboardMarkup(resize_keyboard=True)
     kb.add(types.KeyboardButton(text="✉Отправить рассылку✉"))
+    kb.add(types.KeyboardButton(text="Test Qr-Code"))
     kb.add(types.KeyboardButton(text="📊Посмотреть статистику📊"))
     kb.add(types.KeyboardButton(text="🍽Добавить блюдо🍽"))
     kb.add(types.KeyboardButton(text="🗑Удалить блюдо🗑"))
