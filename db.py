@@ -239,6 +239,15 @@ def get_food_by_name(name):
     return food
 
 
+def delete_food_by_name(name: str) -> bool:
+    db = get_database()
+    food_collection = db['Dishes']
+    food = get_food_by_name(name)
+    food_id = food['_id']
+    food_collection.delete_one({"_id": food_id})
+    return True
+
+
 def get_stat_time():
     db = get_database()
     reservations = get_all_orders()
