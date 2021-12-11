@@ -1,4 +1,5 @@
 from aiogram.utils.helper import Helper, HelperMode, ListItem
+from aiogram.dispatcher.filters.state import State, StatesGroup
 
 
 class StateMachine(Helper):
@@ -14,5 +15,18 @@ class StateMachine(Helper):
     ADMIN_MESSAGE_STATE = ListItem()
 
 
+class NewStateMachine(StatesGroup):
+    REGISTRATION_NAME_STATE = State()
+    REGISTRATION_PHONE_STATE = State()
+    ADMIN = State()
+    ADMIN_DELETE_DISH = State()
+    ADMIN_NEW_CATEGORY = State()
+    PEOPLE_NUMBER = State()
+    PEOPLE_TIME = State()
+    ADMIN_MESSAGE_STATE = State()
+
+
 if __name__ == '__main__':
-    print(StateMachine.all())
+    for index, state in enumerate(StateMachine.all()):
+        print(f"{index} - {state}")
+
