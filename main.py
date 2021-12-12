@@ -13,6 +13,9 @@ from handlers.user.user_menu_handler import register_user_handlers_menu
 from handlers.common.registration_handler import register_common_handlers
 from handlers.user.table_reserve_handler import register_table_reserve_handlers
 from handlers.admin.admin_menu_handler import register_admin_menu_handlers
+from handlers.admin.delete_dish_handler import register_delete_dish_admin
+from handlers.admin.sendings_handler import register_sending_handlers
+from handlers.admin.statistics_handler import register_statistics_handlers
 
 import db
 from StateMachine import NewStateMachine, StateMachine
@@ -410,6 +413,9 @@ if __name__ == '__main__':
     register_common_handlers(dp)
     register_table_reserve_handlers(dp)
     register_admin_menu_handlers(dp)
+    register_delete_dish_admin(dp)
+    register_sending_handlers(dp)
+    register_statistics_handlers(dp)
     executor.start_polling(dp)
 
 # исправить в админке всё, кроме эдинг дишес и меню
