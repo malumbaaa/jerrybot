@@ -112,6 +112,11 @@ async def table_choose_callback(callback_query: types.CallbackQuery):
 #         await message.answer("Эта функция недоступна для вас")
 
 
+@dp.callback_query_handler
+async def all_callbacks(callback_query: types.CallbackQuery):
+    await callback_query.answer("Что-нибудь")
+
+
 @dp.message_handler(lambda m: m.text.startswith('Test Qr-Code'), state=NewStateMachine.ADMIN)
 async def test_qr_code(message: types.Message, state: FSMContext):
     await message.answer("Отправьте фотографию с QR кодом")
@@ -368,14 +373,14 @@ async def callback_calendar(callback_query: types.CallbackQuery):
     await bot.answer_callback_query(callback_query.id)
 
 
-# @dp.callback_query_handler(lambda c: c.data.startswith('IGNORE'))
-# @dp.callback_query_handler(lambda c: c.data.startswith('PREV-MONTH'))
-# @dp.callback_query_handler(lambda c: c.data.startswith('DAY'))
-# @dp.callback_query_handler(lambda c: c.data.startswith('NEXT-MONTH'))
-# async def callback_calendar(callback_query: types.CallbackQuery):
-#     response = tgcalendar.process_calendar_selection(bot, callback_query)
-#     await response[0]
-#     await bot.answer_callback_query(callback_query.id)
+@dp.callback_query_handler(lambda c: c.data.startswith('IGNORE'))
+@dp.callback_query_handler(lambda c: c.data.startswith('PREV-MONTH'))
+@dp.callback_query_handler(lambda c: c.data.startswith('DAY'))
+@dp.callback_query_handler(lambda c: c.data.startswith('NEXT-MONTH'))
+async def callback_calendar(callback_query: types.CallbackQuery):
+    response = tgcalendar.process_calendar_selection(bot, callback_query)
+    await response[0]
+    await bot.answer_callback_query(callback_query.id)
 
 
 @dp.message_handler(commands=['help'])
@@ -407,11 +412,11 @@ async def reg(message: types.Message):
 
 
 if __name__ == '__main__':
+    register_table_reserve_handlers(dp)
     register_handlers_menu(dp)
     register_handlers_food(dp)
     register_user_handlers_menu(dp)
     register_common_handlers(dp)
-    register_table_reserve_handlers(dp)
     register_admin_menu_handlers(dp)
     register_delete_dish_admin(dp)
     register_sending_handlers(dp)

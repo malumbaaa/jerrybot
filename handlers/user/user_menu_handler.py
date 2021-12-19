@@ -1,4 +1,4 @@
-
+from aiogram.dispatcher.filters.state import State, StatesGroup
 
 from aiogram.dispatcher import FSMContext
 
@@ -8,11 +8,14 @@ from StateMachine import NewStateMachine
 import config
 import TGCalendar.telegramcalendar as tgcalendar
 from aiogram import Dispatcher, types
+from handlers.user.table_reserve_handler import TableReserveStateMachine
 
 
-async def reserve(message: types.Message):
+async def reserve(message: types.Message, state: FSMContext):
     calendar_keyboard = tgcalendar.create_calendar()
     await message.answer("Пожалуйста, выберите дату:", reply_markup=calendar_keyboard)
+    # await state.set_state(TableReserveStateMachine.main_state.set())
+
 
 
 # функция перехода в режим админа

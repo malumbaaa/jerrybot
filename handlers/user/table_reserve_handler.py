@@ -1,5 +1,5 @@
 from aiogram.dispatcher import FSMContext
-
+from aiogram.dispatcher.filters.state import State, StatesGroup
 import keyboards
 
 import db
@@ -8,10 +8,18 @@ import TGCalendar.telegramcalendar as tgcalendar
 from aiogram import Dispatcher, types
 
 
-async def callback_calendar(callback_query: types.CallbackQuery):
+class TableReserveStateMachine(StatesGroup):
+    admin_new_category = State()
+    people_number = State()
+    main_state = State()
+
+
+async def callback_calendar(callback_query: types.CallbackQuery, state: FSMContext):
     response = tgcalendar.process_calendar_selection(callback_query.bot, callback_query)
+    print("**"*200)
     await response[0]
     await callback_query.bot.answer_callback_query(callback_query.id)
+    await state.reset_state()
 
 
 # функция ввода количества людей
@@ -20,7 +28,8 @@ async def table_choose_callback_valid(callback_query: types.CallbackQuery, state
         date = separated_data[3].split("-")
         await callback_query.answer(callback_query.id)
         await state.set_data(callback_query.data)
-        await state.set_state(NewStateMachine.ADMIN_NEW_CATEGORY.set())  # set people_number state
+        # await state.set_state(NewStateMachine.ADMIN_NEW_CATEGORY.set())  # set people_number state
+        await state.set_state(TableReserveStateMachine.people_number.set())
         await callback_query.message.edit_text(text=f"Вы выбрали "
                                          f"стол №{separated_data[2]} на {separated_data[1]}\n"
                                          f"{date[2]}.{date[1]}.{date[0]}\n"
@@ -60,11 +69,11 @@ async def people_number_message(message: types.Message, state: FSMContext):
 
 
 def register_table_reserve_handlers(dp: Dispatcher):
-    dp.register_message_handler(people_number_message, state=NewStateMachine.PEOPLE_NUMBER)
+    dp.callback_query_handler(callback_calendar, lambda c: c.data.startswith('IGNORE'), state=TableReserveStateMachine.main_state)
+    dp.callback_query_handler(callback_calendar, lambda c: c.data.startswith('PREV-MONTH'), state=TableReserveStateMachine.main_state)
+    dp.callback_query_handler(callback_calendar, lambda c: c.data.startswith('DAY'), state=TableReserveStateMachine.main_state)
+    dp.callback_query_handler(callback_calendar, lambda c: c.data.startswith('NEXT_MONTH'), state=TableReserveStateMachine.main_state)
+    dp.register_message_handler(people_number_message, state=TableReserveStateMachine.people_number)
     dp.register_callback_query_handler(people_time_message, lambda c: c.data.startswith('table'))
     dp.register_callback_query_handler(table_choose_callback, lambda c: c.data.startswith('reserved'))
     dp.register_callback_query_handler(table_choose_callback_valid, lambda c: c.data.startswith('time'))
-    dp.callback_query_handler(callback_calendar, lambda c: c.data.startswith('IGNORE'))
-    dp.callback_query_handler(callback_calendar, lambda c: c.data.startswith('PREV-MONTH'))
-    dp.callback_query_handler(callback_calendar, lambda c: c.data.startswith('DAY'))
-    dp.callback_query_handler(callback_calendar, lambda c: c.data.startswith('NEXT_MONTH'))
