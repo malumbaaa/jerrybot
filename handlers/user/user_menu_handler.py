@@ -17,12 +17,11 @@ async def reserve(message: types.Message, state: FSMContext):
     # await state.set_state(TableReserveStateMachine.main_state.set())
 
 
-
 # функция перехода в режим админа
 async def set_admin_state(message: types.Message, state: FSMContext):
     if str(message.from_user.id) in config.ADMIN_IDS:
         admin_kb = keyboards.admin_keyboard()
-        await state.set_state(NewStateMachine.ADMIN.set())  # set admin state
+        await state.set_state(NewStateMachine.ADMIN)  # set admin state
         await message.answer("Вы вошли в режим админа", reply_markup=admin_kb)
     else:
         await message.answer("Эта функция недоступна для вас")

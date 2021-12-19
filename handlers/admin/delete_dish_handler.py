@@ -6,8 +6,12 @@ import keyboards
 
 import db
 from StateMachine import NewStateMachine
-
+from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import Dispatcher, types
+
+
+class DeleteDishStateMachine(StatesGroup):
+    admin_delete_dish = State()
 
 
 async def category_delete_dish_callback(callback_query: types.CallbackQuery, state: FSMContext):
@@ -69,12 +73,12 @@ async def exit_delete_dish(message: types.Message, state: FSMContext):
 
 def register_delete_dish_admin(dp: Dispatcher):
     dp.register_callback_query_handler(category_delete_dish_callback, lambda c: c.data.startswith('category'),
-                                       state=NewStateMachine.ADMIN_DELETE_DISH)
+                                       state=DeleteDishStateMachine.admin_delete_dish)
     dp.register_message_handler(exit_delete_dish, lambda m: m.text.startswith('❌Выйти из режима удаления❌'),
-                                state=NewStateMachine.ADMIN_DELETE_DISH)
+                                state=DeleteDishStateMachine.admin_delete_dish)
     dp.register_callback_query_handler(delete_dish, lambda c: c.data.startswith('delete'),
-                                       state=NewStateMachine.ADMIN_DELETE_DISH)
+                                       state=DeleteDishStateMachine.admin_delete_dish)
     dp.register_callback_query_handler(change_delete_food_by_callback, lambda c: c.data.startswith('food'),
-                                       state=NewStateMachine.ADMIN_DELETE_DISH)
+                                       state=DeleteDishStateMachine.admin_delete_dish)
 
 

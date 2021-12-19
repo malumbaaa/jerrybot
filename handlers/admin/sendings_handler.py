@@ -1,12 +1,15 @@
 from aiogram.dispatcher import FSMContext
-
-
 import keyboards
 
 
 import db
 from StateMachine import NewStateMachine
 from aiogram import Dispatcher,  types
+from aiogram.dispatcher.filters.state import State, StatesGroup
+
+
+class AdminSendMessageStateMachine(StatesGroup):
+    admin_message_state = State()
 
 
  # Подтверждение рассылки
@@ -20,7 +23,7 @@ async def accepted_message(callback_query: types.CallbackQuery, state: FSMContex
             await message.send_copy(chat_id=user['telegram_id'])
     elif separated_data[1] == 'reject':
         await callback_query.message.answer(text='Рассылка отменена')
-    await state.set_state(NewStateMachine.ADMIN.set())
+    await state.set_state(NewStateMachine.ADMIN)
 
 
   # Отправка рассылки
@@ -32,6 +35,6 @@ async def send_message(message: types.Message, state: FSMContext):
 
 def register_sending_handlers(dp: Dispatcher):
     dp.register_message_handler(send_message, content_types=types.ContentType.ANY,
-                                state=NewStateMachine.ADMIN_MESSAGE_STATE)
-    dp.callback_query_handler(accepted_message, lambda c: c.data.startswith('send'),
-                              state=NewStateMachine.ADMIN_MESSAGE_STATE)
+                                state=AdminSendMessageStateMachine.admin_message_state)
+    dp.register_callback_query_handler(accepted_message, lambda c: c.data.startswith('send'),
+                              state=AdminSendMessageStateMachine.admin_message_state)

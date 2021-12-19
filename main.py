@@ -372,15 +372,15 @@ async def callback_calendar(callback_query: types.CallbackQuery):
     await response[0]
     await bot.answer_callback_query(callback_query.id)
 
-
-@dp.callback_query_handler(lambda c: c.data.startswith('IGNORE'))
-@dp.callback_query_handler(lambda c: c.data.startswith('PREV-MONTH'))
-@dp.callback_query_handler(lambda c: c.data.startswith('DAY'))
-@dp.callback_query_handler(lambda c: c.data.startswith('NEXT-MONTH'))
-async def callback_calendar(callback_query: types.CallbackQuery):
-    response = tgcalendar.process_calendar_selection(bot, callback_query)
-    await response[0]
-    await bot.answer_callback_query(callback_query.id)
+#
+# @dp.callback_query_handler(lambda c: c.data.startswith('IGNORE'))
+# @dp.callback_query_handler(lambda c: c.data.startswith('PREV-MONTH'))
+# @dp.callback_query_handler(lambda c: c.data.startswith('DAY'))
+# @dp.callback_query_handler(lambda c: c.data.startswith('NEXT-MONTH'))
+# async def callback_calendar(callback_query: types.CallbackQuery):
+#     response = tgcalendar.process_calendar_selection(bot, callback_query)
+#     await response[0]
+#     await bot.answer_callback_query(callback_query.id)
 
 
 @dp.message_handler(commands=['help'])

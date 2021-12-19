@@ -5,10 +5,12 @@ import keyboards
 
 from StateMachine import NewStateMachine
 from aiogram import Bot, Dispatcher, executor, types
+from handlers.admin.delete_dish_handler import DeleteDishStateMachine
+from handlers.admin.sendings_handler import AdminSendMessageStateMachine
 
 
 async def admin_sending(message: types.Message, state: FSMContext):
-    await state.set_state(NewStateMachine.ADMIN_MESSAGE_STATE.set())
+    await state.set_state(AdminSendMessageStateMachine.admin_message_state)
     await message.bot.send_message(text='Введите сообщение, которое хотите отправить: ', chat_id=message.chat.id)
 
 
@@ -19,7 +21,7 @@ async def add_dish(message: types.Message):
 
 
 async def delete_dish(message: types.Message, state: FSMContext):
-    await state.set_state(NewStateMachine.ADMIN_DELETE_DISH.set())
+    await state.set_state(DeleteDishStateMachine.admin_delete_dish.set())
     deletion_kb = ReplyKeyboardMarkup(row_width=1, resize_keyboard=True)
     deletion_kb.add(types.KeyboardButton(text="❌Выйти из режима удаления❌"))
     await message.answer("Режим удаления блюд", reply_markup=deletion_kb)
@@ -51,6 +53,9 @@ async def admin_statistics(message: types.Message):
 
 
 def register_admin_menu_handlers(dp: Dispatcher):
+    dp.register_message_handler(admin_sending, commands=['send_message'], state=NewStateMachine.ADMIN)
+    dp.register_message_handler(admin_sending, lambda m: m.text.startswith('✉Отправить рассылку'),
+                                state=NewStateMachine.ADMIN)
     dp.register_message_handler(admin_statistics, commands=['stat'], state=NewStateMachine.ADMIN)
     dp.register_message_handler(admin_statistics, lambda m: m.text.startswith('📊Посмотреть статистику'),
                                 state=NewStateMachine.ADMIN)
@@ -60,6 +65,3 @@ def register_admin_menu_handlers(dp: Dispatcher):
                                 state=NewStateMachine.ADMIN)
     dp.register_message_handler(add_dish, commands=['add'], state=NewStateMachine.ADMIN)
     dp.register_message_handler(add_dish, lambda m: m.text.startswith('🍽Добавить блюдо🍽'), state=NewStateMachine.ADMIN)
-    dp.register_message_handler(admin_sending, commands=['send_message'], state=NewStateMachine.ADMIN)
-    dp.register_message_handler(admin_sending, lambda m: m.text.startswith('✉Отправить рассылку'),
-                                state=NewStateMachine.ADMIN)
