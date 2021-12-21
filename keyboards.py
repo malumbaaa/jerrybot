@@ -11,6 +11,7 @@ def table_choose(table_count: int, year, month, day):
     row = []
     for i in range(table_count):
         table_kb.add(InlineKeyboardButton(f"Стол №{i+1}", callback_data=f"table;{i+1};{year};{month};{day}"))
+    table_kb.add(InlineKeyboardButton("Отменить действие", callback_data="cancel_state"))
     return table_kb
 
 
@@ -39,7 +40,9 @@ def get_reserved_time(date: str, table: str) -> InlineKeyboardMarkup:
                                                                                       f"{table};{date}"))
             else:
                 buttons.append(InlineKeyboardButton(f"     ", callback_data=f"reserved"))
-    return time_kb.add(*buttons)
+    time_kb.add(*buttons)
+    time_kb.add(InlineKeyboardButton("Отменить действие", callback_data="cancel_state"))
+    return time_kb
 
 
 def get_categories_kb() -> InlineKeyboardMarkup:
@@ -49,7 +52,9 @@ def get_categories_kb() -> InlineKeyboardMarkup:
     if len(categories) > 0:
         for category in categories:
             buttons.append(InlineKeyboardButton(f"{category['name']}", callback_data=f"category;{category['name']};1"))
-    return keyboard.add(*buttons)
+    keyboard.add(*buttons)
+    keyboard.add(InlineKeyboardButton("Отменить действие", callback_data="cancel_state"))
+    return keyboard
 
 
 def yes_no_keyboard(number_in_queue):
@@ -64,6 +69,7 @@ def time_choose():
     for hour in range(17, 6):
         for minute in ['00', '30']:
             time_kb.add(InlineKeyboardButton(f"{hour}.{minute}", callback_data=f"time;{hour};{minute}"))
+    time_kb.add(InlineKeyboardButton("Отменить действие", callback_data="cancel_state"))
     return time_kb
 
 
@@ -78,7 +84,9 @@ def beautiful_change_of_food(current_food, count_food, category, name, cart_opti
         get_btn = InlineKeyboardButton(f"Удалить блюдо", callback_data=f'delete;{name}')
     else:
         get_btn = InlineKeyboardButton(f"Заказать", callback_data=f'cart;{name}')
-    return food_changing_kb.add(left_btn, count_btn, right_btn, get_btn)
+    food_changing_kb.add(left_btn, count_btn, right_btn, get_btn)
+    food_changing_kb.add(InlineKeyboardButton("Отменить действие", callback_data="cancel_state"))
+    return food_changing_kb
 
 
 def send_message():

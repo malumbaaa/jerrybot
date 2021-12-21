@@ -16,23 +16,23 @@ class TableReserveStateMachine(StatesGroup):
 
 async def callback_calendar(callback_query: types.CallbackQuery):
     response = tgcalendar.process_calendar_selection(callback_query.bot, callback_query)
-    print("**"*200)
+    print("**" * 200)
     await response[0]
     await callback_query.bot.answer_callback_query(callback_query.id)
 
 
 # функция ввода количества людей
 async def table_choose_callback_valid(callback_query: types.CallbackQuery, state: FSMContext):
-        separated_data = callback_query.data.split(";")
-        date = separated_data[3].split("-")
-        await callback_query.answer(callback_query.id)
-        await state.set_data(callback_query.data)
-        # await state.set_state(NewStateMachine.ADMIN_NEW_CATEGORY.set())  # set people_number state
-        await state.set_state(TableReserveStateMachine.people_number)
-        await callback_query.message.edit_text(text=f"Вы выбрали "
-                                         f"стол №{separated_data[2]} на {separated_data[1]}\n"
-                                         f"{date[2]}.{date[1]}.{date[0]}\n"
-                                         f"Напишите количество человек:")
+    separated_data = callback_query.data.split(";")
+    date = separated_data[3].split("-")
+    await callback_query.answer()
+    await state.set_data(callback_query.data)
+    # await state.set_state(NewStateMachine.ADMIN_NEW_CATEGORY.set())  # set people_number state
+    await TableReserveStateMachine.people_number.set()
+    await callback_query.message.edit_text(text=f"Вы выбрали "
+                                                f"стол №{separated_data[2]} на {separated_data[1]}\n"
+                                                f"{date[2]}.{date[1]}.{date[0]}\n"
+                                                f"Напишите количество человек:")
 
 
 # функция ввода количества людей
