@@ -1,4 +1,5 @@
 from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters.state import State,StatesGroup
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, ParseMode
 import keyboards
@@ -7,6 +8,10 @@ from StateMachine import NewStateMachine
 from aiogram import Bot, Dispatcher, executor, types
 from handlers.admin.delete_dish_handler import DeleteDishStateMachine
 from handlers.admin.sendings_handler import AdminSendMessageStateMachine
+
+
+class AdminStates(StatesGroup):
+    choose_stat_type = State()
 
 
 async def admin_sending(message: types.Message, state: FSMContext):
@@ -46,6 +51,7 @@ async def admin_message(message: types.Message, state: FSMContext):
 # функция для видов статистики
 async def admin_statistics(message: types.Message):
     kb = InlineKeyboardMarkup()
+    await AdminStates.choose_stat_type.set()
     kb.add(types.InlineKeyboardButton('Клиенты', callback_data='stat;clients'))
     kb.add(types.InlineKeyboardButton('Время', callback_data='stat;time'))
     kb.add(types.InlineKeyboardButton('Заказы', callback_data='stat;orders'))

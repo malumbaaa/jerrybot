@@ -171,7 +171,6 @@ async def qr_code_handler(message: types.Message, state: FSMContext):
     qr_code = res.json()
     qr_code_data = qr_code[0]['symbol'][0]['data']
     print(qr_code_data)
-    # https://api.qrserver.com/v1/read-qr-code/?fileurl=https://api.telegram.org/file/bot2051511728:AAHLUlPVPUtOUQXLoocW48V39ST3AYKXTrA/photos/file_8.jpg
     if qr_code_data == "order":
         await message.answer(f"Замечательно! Теперь можете нажать кнопку 💰Купить💰, чтобы заказать еду\n"
                              f"Qr code data:{qr_code_data}")

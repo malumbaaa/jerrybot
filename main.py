@@ -8,6 +8,7 @@ from handlers.admin.adding_dishes import register_handlers_food, AddDish
 import requests
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, ParseMode
 import keyboards
+from handlers.common.cancel_state_handler import register_cancel_state_handlers
 from handlers.user.menu_handler import register_handlers_menu, Menu
 from handlers.user.user_menu_handler import register_user_handlers_menu
 from handlers.common.registration_handler import register_common_handlers
@@ -26,7 +27,7 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.contrib.middlewares.logging import LoggingMiddleware
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 # Initialize bot and dispatcher
 bot = Bot(token=config.TG_API_TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
@@ -412,6 +413,7 @@ async def reg(message: types.Message):
 
 
 if __name__ == '__main__':
+    register_cancel_state_handlers(dp)
     register_table_reserve_handlers(dp)
     register_handlers_menu(dp)
     register_handlers_food(dp)
